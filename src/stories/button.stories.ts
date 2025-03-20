@@ -13,16 +13,15 @@ const meta = {
   argTypes: {
     iconleft: {
       control: { type: 'boolean' },
+      description: 'Se presente icona a sinistra',
     },
     iconright: {
       control: { type: 'boolean' },
+      description: 'Se presente icona a destra',
     },
     iconsize: {
       control: { type: 'select' },
       options: ['small', 'medium', 'large'],
-    },
-    iconname: {
-      control: { type: 'text' },
     },
     width: {
       control: { type: 'select' },
@@ -133,7 +132,6 @@ export const CarrelloDesktop: Story = {
     iconleft: true,
     iconright: false,
     iconsize: 'medium',
-    iconname: 'carrello',
     width: 'fitcontent',
     variant: 'primario',
     type: 'pieno',
@@ -146,7 +144,6 @@ export const CarrelloMobile: Story = {
     iconleft: true,
     iconright: false,
     iconsize: 'small',
-    iconname: 'carrello',
     width: 'fitcontent',
     variant: 'primario',
     type: 'pieno',

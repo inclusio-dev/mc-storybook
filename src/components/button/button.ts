@@ -1,15 +1,12 @@
 import { html } from 'lit';
 
 import './button.css';
-import frecciasx from '@/components/icons/frecciasx';
-import frecciadx from '@/components/icons/frecciadx';
-import carrello from '@/components/icons/carrello';
+import { icon } from '../icon/icon';
 
 export interface ButtonProps {
   iconleft?: boolean;
   iconright?: boolean;
   iconsize?: 'small' | 'medium' | 'large';
-  iconname?: string;
   width?: 'fitcontent' | 'fixed';
   variant?: 'primario' | 'secondario' | 'terziario' | 'dolcecasa' | 'dolcecasanero';
   type?: 'pieno' | 'contorno';
@@ -17,7 +14,7 @@ export interface ButtonProps {
   onClick?: () => void;
 }
 
-export const button = ({ variant = "primario", type = "pieno", iconleft, iconright, iconsize, iconname, width, label, onClick }: ButtonProps) => {
+export const button = ({ variant = "primario", type = "pieno", iconleft, iconright, iconsize, width, label, onClick }: ButtonProps) => {
 
   return html`
     <button
@@ -25,9 +22,9 @@ export const button = ({ variant = "primario", type = "pieno", iconleft, iconrig
       class=${['button', `button--${variant}-${type}`, `button-${width}`, `button-${label === "" ? "rounded" : "normal"}`, `button-icon${iconsize}`].join(' ')}
       @click=${onClick}
     >
-      ${iconleft ? iconname === "carrello" ? carrello() : frecciasx() : null}
+      ${iconleft ? icon({ type: 'tipo_freccia_sx', size: 'medium' }) : null}
       ${label}
-      ${iconright ? frecciadx() : null}
+      ${iconright ? icon({ type: 'tipo_freccia_dx', size: 'medium' }) : null}
     </button>
   `;
 };
