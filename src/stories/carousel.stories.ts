@@ -5,11 +5,9 @@ import '@/components/carousel/carousel.css';
 export default {
   title: 'Carosello',
   tags: ['autodocs'],
-  // Utilizziamo una funzione di rendering per il componente
   render: (args) => {
-    // Caricamento dinamico dei CSS di Swiper nel preview di Storybook
+    // Caricamento dinamico dei CSS di Swiper
     const injectSwiperStyles = () => {
-      // Verifica se gli stili sono già caricati
       if (!document.getElementById('swiper-styles')) {
         const swiperCoreStyle = document.createElement('link');
         swiperCoreStyle.id = 'swiper-styles';
@@ -19,10 +17,10 @@ export default {
       }
     };
 
-    // Eseguiamo questa funzione per ogni rendering
+    // Carica gli stili di Swiper
     injectSwiperStyles();
 
-    // Rendiamo il componente
+    // Renderizza il componente
     return carousel(args);
   },
   argTypes: {
@@ -116,7 +114,6 @@ export default {
 
 type Story = StoryObj<CarouselProps>;
 
-
 // Dati di esempio per tutte le storie
 const sampleSlides = [
   {
@@ -169,40 +166,32 @@ export const Default: Story = {
     autoplay: false,
     loop: true,
     delay: 5000,
+    multiSlide: false,
+    slidesPerView: 1,
+    spaceBetween: 20,
+    centeredSlides: false,
+    showPagination: true,
+    showCaptions: false
+  },
+};
+
+export const FiveSlides: Story = {
+  args: {
+    slides: sampleSlides,
+    autoplay: false,
+    loop: true,
+    delay: 5000,
     multiSlide: true,
     slidesPerView: 5,
     spaceBetween: 20,
     centeredSlides: false,
-    showPagination: true,
+    showPagination: false,
     showCaptions: true
-  },
-};
-
-export const ThreeSlides: Story = {
-  args: {
-    ...Default.args,
-    slidesPerView: 3,
-    spaceBetween: 30,
   },
   parameters: {
     docs: {
       description: {
         story: 'Carosello con visualizzazione di 3 slide contemporaneamente e più spazio tra di esse.'
-      },
-    },
-  },
-};
-
-export const CenteredSlides: Story = {
-  args: {
-    ...Default.args,
-    centeredSlides: true,
-    slidesPerView: 3,
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Carosello con la slide attiva centrata e le slide adiacenti parzialmente visibili.'
       },
     },
   },
@@ -217,65 +206,6 @@ export const WithAutoplay: Story = {
     docs: {
       description: {
         story: 'Carosello multi-slide con riproduzione automatica attivata. Si mette in pausa quando l\'utente interagisce con esso.'
-      },
-    },
-  },
-};
-
-export const ResponsiveBreakpoints: Story = {
-  args: {
-    ...Default.args,
-    breakpoints: {
-      320: {
-        slidesPerView: 1,
-        spaceBetween: 10
-      },
-      480: {
-        slidesPerView: 2,
-        spaceBetween: 15
-      },
-      768: {
-        slidesPerView: 3,
-        spaceBetween: 15
-      },
-      1024: {
-        slidesPerView: 5,
-        spaceBetween: 20
-      }
-    }
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Carosello multi-slide con breakpoint responsivi personalizzati. Ridimensiona la finestra per vedere il comportamento su diverse larghezze dello schermo.'
-      },
-    },
-  },
-};
-
-export const NoPagination: Story = {
-  args: {
-    ...Default.args,
-    showPagination: false
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Carosello multi-slide senza i pallini di paginazione. Utilizza solo le frecce di navigazione.'
-      },
-    },
-  },
-};
-
-export const NoCaptions: Story = {
-  args: {
-    ...Default.args,
-    showCaptions: false
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Carosello multi-slide senza le didascalie sotto le immagini.'
       },
     },
   },

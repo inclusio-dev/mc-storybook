@@ -193,23 +193,23 @@ const getSlides = (props: CarouselProps) => {
   }));
 };
 
-// Variabili globali
-let swiper: any = null;
+// Variabili
+let swiperInstances = new Map();
 let liveRegion: HTMLElement | null = null;
-let currentSlide = 0;
-let swiperInitialized = false;
 
-const destroySwiper = () => {
-  if (swiper) {
-    swiper.destroy(true, true);
-    swiper = null;
-    swiperInitialized = false;
+const destroySwiper = (containerId: string) => {
+  if (swiperInstances.has(containerId)) {
+    const swiper = swiperInstances.get(containerId);
+    if (swiper) {
+      swiper.destroy(true, true);
+      swiperInstances.delete(containerId);
+    }
   }
 };
 
-const initSwiper = (container: Element, props: CarouselProps) => {
+const initSwiper = (container: Element, props: CarouselProps, containerId: string) => {
   // Distruggi l'istanza precedente se esiste
-  destroySwiper();
+  destroySwiper(containerId);
   
   // Carica dinamicamente Swiper
   Promise.all([
@@ -227,7 +227,7 @@ const initSwiper = (container: Element, props: CarouselProps) => {
     const centeredSlides = props.multiSlide ? (props.centeredSlides !== undefined ? props.centeredSlides : false) : false;
     
     // Inizializza una nuova istanza di Swiper
-    swiper = new Swiper(container as HTMLElement, {
+    const swiper = new Swiper(container as HTMLElement, {
       slidesPerView: slidesPerView,
       spaceBetween: spaceBetween,
       centeredSlides: centeredSlides,
@@ -261,12 +261,12 @@ const initSwiper = (container: Element, props: CarouselProps) => {
       
       // Impostazioni di navigazione accessibili
       navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
+        nextEl: `#${containerId} .swiper-button-next`,
+        prevEl: `#${containerId} .swiper-button-prev`,
       },
       
       pagination: props.showPagination !== false ? {
-        el: '.swiper-pagination',
+        el: `#${containerId} .swiper-pagination`,
         clickable: true,
         bulletElement: 'button',
         renderBullet: function (index: number, className: string) {
@@ -299,32 +299,35 @@ const initSwiper = (container: Element, props: CarouselProps) => {
       
       // Gestisci gli eventi
       on: {
-        slideChange: function(swiperInstance) {
-          // Utilizziamo l'istanza swiper locale invece di this
-          if (swiper) {
-            currentSlide = swiper.realIndex;
-            
-            // Aggiorna la regione live per utenti screen reader
-            const slides = getSlides(props);
-            const slide = slides[currentSlide];
-            if (slide && liveRegion) {
-              liveRegion.textContent = `Slide corrente: ${slide.title || `Slide ${currentSlide + 1}`}`;
-            }
-            
-            // Aggiorna gli attributi tabindex per la navigazione da tastiera
-            updateTabIndex();
-            
-            // Chiama il callback se definito
-            if (props.onSlideChange) {
-              props.onSlideChange(currentSlide);
-            }
+        slideChange: function() {
+          // Utilizziamo l'istanza swiper locale
+          const currentSwiper = this;
+          // Utilizziamo tipizzazione sicura per TypeScript
+          const swiperInstance = currentSwiper as any;
+          const currentSlide = swiperInstance.realIndex !== undefined 
+            ? swiperInstance.realIndex 
+            : swiperInstance.activeIndex || 0;
+          
+          // Aggiorna la regione live per utenti screen reader
+          const slides = getSlides(props);
+          const slide = slides[currentSlide];
+          if (slide && liveRegion) {
+            liveRegion.textContent = `Slide corrente: ${slide.title || `Slide ${currentSlide + 1}`}`;
+          }
+          
+          // Aggiorna gli attributi tabindex per la navigazione da tastiera
+          updateTabIndex(containerId, currentSlide);
+          
+          // Chiama il callback se definito
+          if (props.onSlideChange) {
+            props.onSlideChange(currentSlide);
           }
         },
         // Utilizziamo questo evento per gestire meglio il focus
         slideChangeTransitionEnd: function() {
           // Dopo che la transizione è completa, facciamo focus sulla slide attiva
           // per migliorare l'esperienza con screen reader
-          const activeSlide = document.querySelector('.swiper-slide-active');
+          const activeSlide = document.querySelector(`#${containerId} .swiper-slide-active`);
           if (activeSlide) {
             // Non spostiamo il focus per evitare confusione, ma assicuriamoci che sia navigabile
             activeSlide.setAttribute('tabindex', '0');
@@ -333,28 +336,46 @@ const initSwiper = (container: Element, props: CarouselProps) => {
       }
     });
     
-    swiperInitialized = true;
+    // Salva l'istanza di Swiper nella mappa
+    swiperInstances.set(containerId, swiper);
     
     // Aggiungi controlli da tastiera personalizzati
-    setupKeyboardControls(props);
+    setupKeyboardControls(props, containerId);
     
     // Inizializza correttamente lo stato di tabindex
-    updateTabIndex();
+    updateTabIndex(containerId, 0);
+    
+    // Aggiungi event listener per il pulsante play/pause
+    const playPauseButton = document.querySelector(`#${containerId} .carousel-play-pause`);
+    if (playPauseButton) {
+      playPauseButton.addEventListener('click', () => {
+        toggleAutoplay(props, playPauseButton as HTMLElement, containerId);
+      });
+    }
+    
+    // Debug info
+    console.log(`Carosello ${containerId} inizializzato con:`, {
+      slides: props.slides?.length,
+      autoplay: props.autoplay,
+      loop: props.loop,
+      multiSlide: props.multiSlide,
+      slidesPerView: props.slidesPerView,
+      showPagination: props.showPagination,
+      showCaptions: props.showCaptions
+    });
   }).catch(error => {
-    console.error('Errore durante l\'inizializzazione di Swiper:', error);
+    console.error(`Errore durante l'inizializzazione di Swiper per ${containerId}:`, error);
   });
 };
 
 // Aggiunge funzione per aggiornare gli attributi tabindex
-const updateTabIndex = () => {
-  if (!swiper) return;
-  
+const updateTabIndex = (containerId: string, currentSlideIndex: number) => {
   // Otteniamo tutte le slide
-  const slides = document.querySelectorAll('.swiper-slide');
+  const slides = document.querySelectorAll(`#${containerId} .swiper-slide`);
   
   slides.forEach((slide, index) => {
     // Impostiamo tabindex=0 solo sulla slide attiva, -1 sulle altre
-    if (index === currentSlide) {
+    if (index === currentSlideIndex) {
       slide.setAttribute('tabindex', '0');
     } else {
       slide.setAttribute('tabindex', '-1');
@@ -363,14 +384,17 @@ const updateTabIndex = () => {
 };
 
 // Miglioriamo i controlli da tastiera per risolvere il problema delle slide bloccate a metà
-const setupKeyboardControls = (props: CarouselProps) => {
+const setupKeyboardControls = (props: CarouselProps, containerId: string) => {
   const handleKeyDown = (event: KeyboardEvent) => {
-    if (!document.activeElement?.closest('.carousel-container')) return;
+    if (!document.activeElement?.closest(`#${containerId}`)) return;
     
     const isNavigationKey = ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key);
     
     // Se stiamo usando tasti di navigazione, assicuriamoci che le transizioni siano immediate
-    if (isNavigationKey && swiper) {
+    if (isNavigationKey && swiperInstances.has(containerId)) {
+      const swiper = swiperInstances.get(containerId);
+      if (!swiper) return;
+      
       // Salva lo stato attuale della velocità di transizione
       const originalSpeed = swiper.params.speed;
       
@@ -393,7 +417,8 @@ const setupKeyboardControls = (props: CarouselProps) => {
       }
       
       // Aggiorna immediatamente gli attributi tabindex
-      updateTabIndex();
+      const swiperAny = swiper as any;
+      updateTabIndex(containerId, swiperAny.realIndex !== undefined ? swiperAny.realIndex : swiperAny.activeIndex || 0);
       
       // Ripristina la velocità originale dopo un breve delay
       setTimeout(() => {
@@ -413,7 +438,13 @@ const setupKeyboardControls = (props: CarouselProps) => {
 
 const addA11yAnnouncer = (container: Element) => {
   // Crea un elemento per annunci ARIA live
-  if (liveRegion) container.removeChild(liveRegion);
+  if (liveRegion) {
+    try {
+      container.removeChild(liveRegion);
+    } catch (e) {
+      // In caso l'elemento non sia un figlio di questo container
+    }
+  }
   
   liveRegion = document.createElement('div');
   liveRegion.setAttribute('aria-live', 'polite');
@@ -423,41 +454,10 @@ const addA11yAnnouncer = (container: Element) => {
   container.appendChild(liveRegion);
 };
 
-const pauseAutoplay = () => {
-  if (swiper && swiper.autoplay && swiper.autoplay.running) {
-    swiper.autoplay.stop();
-    
-    // Aggiorna lo stato visivo del pulsante
-    const button = document.querySelector('.carousel-play-pause');
-    if (button) {
-      const icon = button.querySelector('span');
-      if (icon) {
-        icon.className = 'play-icon';
-      }
-      button.setAttribute('aria-pressed', 'false');
-      button.setAttribute('aria-label', 'Avvia il carosello');
-    }
-  }
-};
-
-const resumeAutoplay = (props: CarouselProps) => {
-  if (swiper && swiper.autoplay && props.autoplay) {
-    swiper.autoplay.start();
-    
-    // Aggiorna lo stato visivo del pulsante
-    const button = document.querySelector('.carousel-play-pause');
-    if (button) {
-      const icon = button.querySelector('span');
-      if (icon) {
-        icon.className = 'pause-icon';
-      }
-      button.setAttribute('aria-pressed', 'true');
-      button.setAttribute('aria-label', 'Metti in pausa il carosello');
-    }
-  }
-};
-
-const toggleAutoplay = (props: CarouselProps, buttonElement: HTMLButtonElement | HTMLElement) => {
+const toggleAutoplay = (props: CarouselProps, buttonElement: HTMLButtonElement | HTMLElement, containerId: string) => {
+  if (!swiperInstances.has(containerId)) return;
+  
+  const swiper = swiperInstances.get(containerId);
   if (!swiper || !swiper.autoplay) return;
   
   // Ottieni lo stato corrente
@@ -478,7 +478,7 @@ const toggleAutoplay = (props: CarouselProps, buttonElement: HTMLButtonElement |
     buttonElement.setAttribute('aria-pressed', 'false');
     buttonElement.setAttribute('aria-label', 'Avvia il carosello');
     
-    console.log('Autoplay fermato');
+    console.log(`Autoplay fermato per ${containerId}`);
   } else {
     // Se è fermo, avvialo
     swiper.autoplay.start();
@@ -491,12 +491,15 @@ const toggleAutoplay = (props: CarouselProps, buttonElement: HTMLButtonElement |
     buttonElement.setAttribute('aria-pressed', 'true');
     buttonElement.setAttribute('aria-label', 'Metti in pausa il carosello');
     
-    console.log('Autoplay avviato');
+    console.log(`Autoplay avviato per ${containerId}`);
   }
 };
 
 // Componente principale
 export const carousel = (props: CarouselProps) => {
+  // Genera un ID univoco per questo carosello
+  const carouselId = `carousel-${Math.floor(Math.random() * 10000)}`;
+  
   const mergedProps = {
     ...props,
     slides: getSlides(props),
@@ -516,50 +519,31 @@ export const carousel = (props: CarouselProps) => {
   
   // Setup del carosello dopo il rendering
   setTimeout(() => {
-    const container = document.querySelector('.carousel-container');
-    const swiperContainer = document.querySelector('.swiper');
+    const container = document.getElementById(carouselId);
+    const swiperContainer = container?.querySelector('.swiper');
     
     if (container && swiperContainer) {
       addA11yAnnouncer(container);
-      initSwiper(swiperContainer, mergedProps);
-      
-      // Aggiungi event listener diretto sul pulsante dopo l'inizializzazione
-      const playPauseButton = document.querySelector('.carousel-play-pause');
-      if (playPauseButton) {
-        // Rimuovi eventuali event listener precedenti
-        const newButton = playPauseButton.cloneNode(true);
-        if (playPauseButton.parentNode) {
-          playPauseButton.parentNode.replaceChild(newButton, playPauseButton);
-        }
-        
-        // Aggiungi event listener direttamente
-        newButton.addEventListener('click', () => {
-          toggleAutoplay(mergedProps, newButton as HTMLElement);
-        });
-      }
-      
-      // Debug info
-      console.log('Carosello inizializzato con:', {
-        slides: mergedProps.slides.length,
-        autoplay: mergedProps.autoplay,
-        loop: mergedProps.loop,
-        autoplay_running: swiper?.autoplay?.running,
-        multiSlide: mergedProps.multiSlide,
-        slidesPerView: mergedProps.slidesPerView
-      });
+      initSwiper(swiperContainer, mergedProps, carouselId);
     }
   }, 0);
   
   // Gestisci la pulizia quando l'elemento viene rimosso
   if (typeof window !== 'undefined') {
-    window.addEventListener('beforeunload', destroySwiper);
+    const cleanup = () => {
+      destroySwiper(carouselId);
+    };
+    
+    // Rimuovi eventuali listener precedenti
+    window.removeEventListener('beforeunload', cleanup);
+    window.addEventListener('beforeunload', cleanup);
   }
   
   // Renderizza l'HTML del carosello
   return html`
-    <div class="carousel-container ${mergedProps.multiSlide ? 'carousel-multi-slide' : ''}">
+    <div id="${carouselId}" class="carousel-container ${mergedProps.multiSlide ? 'carousel-multi-slide' : ''}">
       <!-- Titolo accessibile del carosello -->
-      <h2 id="carousel-title" class="visually-hidden">Galleria di immagini</h2>
+      <h2 id="carousel-title-${carouselId}" class="visually-hidden">Galleria di immagini</h2>
       
       <!-- Istruzioni di accessibilità per screen reader -->
       <div class="visually-hidden" aria-live="polite">
@@ -572,7 +556,7 @@ export const carousel = (props: CarouselProps) => {
         class="swiper" 
         role="region"
         aria-roledescription="carosello" 
-        aria-labelledby="carousel-title"
+        aria-labelledby="carousel-title-${carouselId}"
       >
         <!-- Pulsante Play/Pausa riposizionato con icone Unicode chiare -->
         <button 
@@ -591,8 +575,8 @@ export const carousel = (props: CarouselProps) => {
               role="group" 
               aria-roledescription="slide"
               aria-label="${slide.title || `Slide ${index + 1}`}"
-              tabindex="${currentSlide === index ? '0' : '-1'}"
-              aria-hidden="${currentSlide === index ? 'false' : 'true'}"
+              tabindex="${index === 0 ? '0' : '-1'}"
+              aria-hidden="${index === 0 ? 'false' : 'true'}"
             >
               <img 
                 src="${slide.image}" 
@@ -618,5 +602,4 @@ export const carousel = (props: CarouselProps) => {
         ` : ''}
       </div>
     </div>
-  `;
-};
+  `;};
