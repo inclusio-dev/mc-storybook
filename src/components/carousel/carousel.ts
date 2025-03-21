@@ -147,7 +147,10 @@ const DEFAULT_IMAGES = [
   'https://via.placeholder.com/800x400/3498db/ffffff?text=Slide+1',
   'https://via.placeholder.com/800x400/e74c3c/ffffff?text=Slide+2',
   'https://via.placeholder.com/800x400/2ecc71/ffffff?text=Slide+3',
-  'https://via.placeholder.com/800x400/f39c12/ffffff?text=Slide+4'
+  'https://via.placeholder.com/800x400/f39c12/ffffff?text=Slide+4',
+  'https://via.placeholder.com/800x400/9b59b6/ffffff?text=Slide+5',
+  'https://via.placeholder.com/800x400/34495e/ffffff?text=Slide+6',
+  'https://via.placeholder.com/800x400/1abc9c/ffffff?text=Slide+7'
 ];
 
 export interface CarouselProps {
@@ -160,6 +163,18 @@ export interface CarouselProps {
   autoplay?: boolean;
   loop?: boolean;
   delay?: number;
+  multiSlide?: boolean;
+  slidesPerView?: number;
+  spaceBetween?: number;
+  centeredSlides?: boolean;
+  showPagination?: boolean;
+  showCaptions?: boolean;
+  breakpoints?: {
+    [width: number]: {
+      slidesPerView?: number;
+      spaceBetween?: number;
+    };
+  };
   onSlideChange?: (index: number) => void;
 }
 
@@ -206,10 +221,16 @@ const initSwiper = (container: Element, props: CarouselProps) => {
     // Registra i moduli necessari
     Swiper.use([Navigation, Pagination, A11y, Autoplay]);
     
+    // Configurazione del numero di slide da visualizzare
+    const slidesPerView = props.multiSlide ? (props.slidesPerView || 5) : 1;
+    const spaceBetween = props.multiSlide ? (props.spaceBetween || 20) : 30;
+    const centeredSlides = props.multiSlide ? (props.centeredSlides !== undefined ? props.centeredSlides : false) : false;
+    
     // Inizializza una nuova istanza di Swiper
     swiper = new Swiper(container as HTMLElement, {
-      slidesPerView: 1,
-      spaceBetween: 30,
+      slidesPerView: slidesPerView,
+      spaceBetween: spaceBetween,
+      centeredSlides: centeredSlides,
       loop: props.loop,
       autoplay: props.autoplay ? {
         delay: props.delay || 5000,
@@ -218,20 +239,40 @@ const initSwiper = (container: Element, props: CarouselProps) => {
         pauseOnMouseEnter: false
       } : false,
       
+      // Breakpoint responsivi per la versione multi-slide
+      breakpoints: props.multiSlide ? (props.breakpoints || {
+        320: {
+          slidesPerView: 1,
+          spaceBetween: 10
+        },
+        480: {
+          slidesPerView: 2,
+          spaceBetween: 15
+        },
+        768: {
+          slidesPerView: 3,
+          spaceBetween: 15
+        },
+        1024: {
+          slidesPerView: slidesPerView,
+          spaceBetween: spaceBetween
+        }
+      }) : undefined,
+      
       // Impostazioni di navigazione accessibili
       navigation: {
         nextEl: '.swiper-button-next',
         prevEl: '.swiper-button-prev',
       },
       
-      pagination: {
+      pagination: props.showPagination !== false ? {
         el: '.swiper-pagination',
         clickable: true,
         bulletElement: 'button',
         renderBullet: function (index: number, className: string) {
           return `<button class="${className}" aria-label="Vai alla slide ${index + 1}"></button>`;
         }
-      },
+      } : false,
       
       // Miglioramenti per l'accessibilità
       a11y: {
@@ -461,7 +502,13 @@ export const carousel = (props: CarouselProps) => {
     slides: getSlides(props),
     autoplay: props.autoplay || false,
     loop: props.loop !== undefined ? props.loop : true,
-    delay: props.delay || 5000
+    delay: props.delay || 5000,
+    multiSlide: props.multiSlide || false,
+    slidesPerView: props.slidesPerView || 5,
+    spaceBetween: props.spaceBetween || 20,
+    centeredSlides: props.centeredSlides || false,
+    showPagination: props.showPagination !== undefined ? props.showPagination : true,
+    showCaptions: props.showCaptions !== undefined ? props.showCaptions : true
   };
   
   // Assicuriamoci che gli stili di Swiper siano caricati
@@ -496,7 +543,9 @@ export const carousel = (props: CarouselProps) => {
         slides: mergedProps.slides.length,
         autoplay: mergedProps.autoplay,
         loop: mergedProps.loop,
-        autoplay_running: swiper?.autoplay?.running
+        autoplay_running: swiper?.autoplay?.running,
+        multiSlide: mergedProps.multiSlide,
+        slidesPerView: mergedProps.slidesPerView
       });
     }
   }, 0);
@@ -508,7 +557,7 @@ export const carousel = (props: CarouselProps) => {
   
   // Renderizza l'HTML del carosello
   return html`
-    <div class="carousel-container">
+    <div class="carousel-container ${mergedProps.multiSlide ? 'carousel-multi-slide' : ''}">
       <!-- Titolo accessibile del carosello -->
       <h2 id="carousel-title" class="visually-hidden">Galleria di immagini</h2>
       
@@ -552,7 +601,7 @@ export const carousel = (props: CarouselProps) => {
                 width="800"
                 height="400"
               />
-              ${slide.caption ? html`
+              ${slide.caption && mergedProps.showCaptions ? html`
                 <div class="slide-caption">${slide.caption}</div>
               ` : ''}
             </div>
@@ -563,8 +612,10 @@ export const carousel = (props: CarouselProps) => {
         <div class="swiper-button-prev" role="button" aria-label="Slide precedente" tabindex="0"></div>
         <div class="swiper-button-next" role="button" aria-label="Slide successiva" tabindex="0"></div>
         
-        <!-- Paginazione -->
+        <!-- Paginazione (condizionale) -->
+        ${mergedProps.showPagination ? html`
         <div class="swiper-pagination" role="group" aria-label="Selezione slide"></div>
+        ` : ''}
       </div>
     </div>
   `;
