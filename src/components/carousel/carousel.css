@@ -1,0 +1,184 @@
+@import '/index.css';
+
+.carousel-container {
+    display: block;
+    margin: 0 auto;
+    max-width: 800px;
+    position: relative;
+  }
+  
+  /* Variabili per personalizzare facilmente i colori */
+  :root {
+    --swiper-navigation-color: var(--base-bianco);
+    --swiper-outline-color: #007aff;
+    --swiper-pagination-color: var(--primario-base);
+  }
+  
+  .swiper {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  
+  .swiper-slide {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .swiper-slide img {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+  
+  /* Stili per migliorare l'accessibilità dei controlli di navigazione */
+  .swiper-button-next,
+  .swiper-button-prev {
+    /* Dimensione standard Swiper ma più grande per accessibilità */
+    width: 44px;
+    height: 44px;
+    /* Sfondo per migliorare contrasto */
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 50%;
+    /* Transizione per feedback visivo */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .swiper-button-next:hover,
+  .swiper-button-prev:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+    transform: scale(1.05);
+  }
+  
+  /* Regola di accessibilità per focus visibile */
+  .swiper-button-next:focus,
+  .swiper-button-prev:focus,
+  .swiper-pagination-bullet:focus {
+    outline: 3px solid var(--swiper-outline-color) !important;
+    outline-offset: 2px;
+  }
+  
+  /* Paginazione accessibile */
+  .swiper-pagination-bullet {
+    width: 12px;
+    height: 12px; 
+    opacity: 0.7;
+    /* Transizione per feedback */
+    transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
+  }
+  
+  .swiper-pagination-bullet:hover {
+    transform: scale(1.2);
+  }
+  
+  .swiper-pagination-bullet-active {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  
+  /* Didascalie */
+  .slide-caption {
+    margin-top: 10px;
+    padding: 8px 16px;
+    font-size: 16px;
+    color: #333;
+    width: 100%;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+  
+  /* Pulsante play/pausa riposizionato correttamente */
+  .carousel-play-pause {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.8);
+    border: none;
+    cursor: pointer;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+  }
+  
+  .carousel-play-pause:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+  
+  .carousel-play-pause:focus {
+    outline: 3px solid var(--swiper-outline-color);
+    outline-offset: 2px;
+  }
+  
+  /* Icone Play e Pause con simboli HTML */
+  .play-icon,
+  .pause-icon {
+    color: white;
+    font-size: 18px;
+    line-height: 1;
+  }
+  
+  .play-icon::after {
+    content: "▶";
+  }
+  
+  .pause-icon::after {
+    content: "⏸";
+  }
+  
+  /* Helper per elementi visivamente nascosti ma accessibili agli screen reader */
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+  
+  /* Supporto per preferenze utente */
+  @media (prefers-reduced-motion: reduce) {
+    .swiper-wrapper {
+      transition: transform 0.5s ease !important;
+    }
+    
+    .swiper-button-next:hover,
+    .swiper-button-prev:hover,
+    .swiper-pagination-bullet:hover {
+      transform: none;
+    }
+  }
+  
+  /* Supporto per contrasto elevato */
+  @media (forced-colors: active) {
+    .swiper-button-next,
+    .swiper-button-prev {
+      border: 2px solid currentColor;
+      background-color: transparent;
+    }
+    
+    .swiper-pagination-bullet {
+      border: 1px solid currentColor;
+      background-color: transparent;
+    }
+    
+    .swiper-pagination-bullet-active {
+      background-color: currentColor;
+    }
+    
+    .carousel-play-pause {
+      border: 2px solid currentColor;
+    }
+  }
