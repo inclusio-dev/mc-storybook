@@ -35,6 +35,9 @@ const meta = {
       control: { type: 'select' },
       options: ['pieno', 'contorno'],
     },
+    label: {
+      control: { type: 'text' },
+    }
   },
   args: { onClick: fn() },
 } satisfies Meta<ButtonProps>;
