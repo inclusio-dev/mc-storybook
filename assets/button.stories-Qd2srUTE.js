@@ -5,7 +5,7 @@ import{x as _}from"./lit-element-D_Wi02Oa.js";import{i as b,g as y}from"./icon-B
       @click=${de}
       ?disabled=${ce}
     >
-      ${e=="findomestic"?_`<img src='/assets/findomestic.svg'>`:null}
+      ${e=="findomestic"?_`<img src='./assets/findomestic.svg'>`:null}
       ${g?b({type:g,size:h}):null}
       ${x}
       ${u?b({type:u,size:h}):null}
