@@ -75,10 +75,22 @@ export const svgIcons = {
 // Tipo che elenca tutte le icone disponibili
 export type IconType = keyof typeof svgIcons;
 
-// Funzione per ottenere un'icona
+/**
+ * Funzione per ottenere un'icona
+ * @param iconName - Tipo di icona richiesto
+ * @returns Stringa SVG
+ */
 export const getIconSvg = (iconName: IconType): string => {
   return svgIcons[iconName] || '';
-};`;
+};
+
+/**
+ * Restituisce un array con tutti i tipi di icone disponibili
+ * @returns Array di IconType
+ */
+export function getAllIconTypes(): IconType[] {
+  return Object.keys(svgIcons) as IconType[];
+}`;
 }
 
 // Funzione per leggere tutti i file SVG dalla cartella
@@ -112,17 +124,13 @@ function processSvgContent(content) {
     .trim();
     
   try {
-    // Approccio più sicuro: verifica se l'SVG contiene un elemento con fill="black"
-    if (processedContent.match(/fill="(#000000|#000|black)"/i)) {
-      // Sostituisci fill="black" (o #000, #000000) con currentColor, ma mantieni fill="white" invariato
-      processedContent = processedContent.replace(/fill="(#000000|#000|black)"/gi, 'fill="currentColor"');
-    }
+    // Sostituisci qualsiasi attributo fill con valore colore con currentColor
+    // Regex che corrisponde a fill="anycolor" ma esclude fill="none" e fill="currentColor"
+    processedContent = processedContent.replace(/fill="(?!none|currentColor)(#[0-9a-fA-F]{3,8}|[a-zA-Z]+)"/gi, 'fill="currentColor"');
     
-    // Verifica se l'SVG contiene un elemento con stroke="black"
-    if (processedContent.match(/stroke="(#000000|#000|black)"/i)) {
-      // Sostituisci anche stroke="black" (o #000, #000000) con currentColor
-      processedContent = processedContent.replace(/stroke="(#000000|#000|black)"/gi, 'stroke="currentColor"');
-    }
+    // Sostituisci qualsiasi attributo stroke con valore colore con currentColor
+    // Regex che corrisponde a stroke="anycolor" ma esclude stroke="none" e stroke="currentColor"
+    processedContent = processedContent.replace(/stroke="(?!none|currentColor)(#[0-9a-fA-F]{3,8}|[a-zA-Z]+)"/gi, 'stroke="currentColor"');
     
     // Per gli elementi che non hanno fill, aggiungi fill="currentColor" solo se non hanno già uno stroke
     const tagRegex = /<(path|circle|rect|polygon|ellipse|line|polyline)([^>]*?)(?:\s*\/)?>/g;
@@ -133,6 +141,13 @@ function processSvgContent(content) {
       }
       return match;
     });
+    
+    // Log di debug per vedere i colori trovati
+    const colorMatches = [...processedContent.matchAll(/fill="(#[0-9a-fA-F]{3,8}|[a-zA-Z]+)"|stroke="(#[0-9a-fA-F]{3,8}|[a-zA-Z]+)"/g)];
+    if (colorMatches.length > 0) {
+      console.warn(`Attenzione: Alcuni colori potrebbero essere rimasti nell'icona.`);
+    }
+    
   } catch (error) {
     // In caso di errore, restituisci l'SVG originale solo formattato
     console.warn(`Attenzione: problema durante l'elaborazione di un SVG. Utilizzo versione originale.`);
@@ -305,10 +320,12 @@ async function main() {
     
     console.log('\n🎉 Processo completato con successo!');
     console.log('Le icone precedenti sono state rimosse e sostituite con quelle nella cartella iconadainserire.');
+    console.log('Tutti i colori negli SVG sono stati sostituiti con currentColor.');
     console.log('\nOra puoi utilizzare queste icone nel tuo codice:');
     
     if (icons.length > 0) {
       console.log(`Esempio: getIconSvg("${icons[0].name}")`);
+      console.log(`Per ottenere tutte le icone disponibili: getAllIconTypes()`);
     }
     
   } catch (err) {
