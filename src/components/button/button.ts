@@ -26,7 +26,7 @@ export const button = ({ variant = "primario", type = "pieno", disabled, iconlef
       @click=${onClick}
       ?disabled=${disabled}
     >
-      ${variant == "findomestic" ? html`<img src='/assets/findomestic.svg'>` : null}
+      ${variant == "findomestic" ? html`<img src='./assets/findomestic.svg'>` : null}
       ${iconleft ? icon({ type: iconleft, size: iconsize }) : null}
       ${label}
       ${iconright ? icon({ type: iconright, size: iconsize }) : null}
