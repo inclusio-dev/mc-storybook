@@ -30,11 +30,16 @@
     padding: 0.75rem;
 }
 
-.button-fitcontent {
+.button-width-fitcontent {
     width: fit-content;
 }
-.button-fixed {
+.button-width-fixed {
     min-width: 16rem;
+}
+.button-height-fitcontent{
+    padding: 0.35rem 0.75rem;
+}
+.button-height-fixed{
     min-height: 3rem;
 }
 
@@ -119,6 +124,26 @@
 .button--dolcecasanero-pieno > svg {
     fill: var(--base-bianco);
 }
+.button--findomestic-pieno{
+    background-color: var(--findomestic);
+    color: var(--base-bianco);
+    text-transform: none;
+    padding: 0 var(--gap) 0 0;
+}
+.button--carrello-pieno{
+    height: 6.25rem;
+    width: 31.25rem;
+    background-color: var(--primario-base);
+    color: var(--base-bianco);
+    font-size: 1rem;
+    justify-content: space-between
+}
+.button--carrello-pieno > svg {
+    fill: var(--base-bianco);
+}
+.button--carrello-pieno:hover {
+    background-color: var(--primario-scuro);
+}
 
 .button--small {
     padding: 10px 16px;
@@ -137,4 +162,8 @@
 .button[disabled]{
     cursor: not-allowed;
     opacity: 0.5;
+}
+
+.button-centered{
+
 }
