@@ -4,6 +4,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 
 import type { ButtonProps } from '@/components/button/button';
 import { button } from '@/components/button/button';
+import { getAllIconTypes } from '@/components/icon/iconSvgs';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
@@ -12,12 +13,14 @@ const meta = {
   render: (args) => button(args),
   argTypes: {
     iconleft: {
-      control: { type: 'boolean' },
-      description: 'Se presente icona a sinistra',
+      control: { type: 'select' },
+      options: [null, ...getAllIconTypes()],
+      description: 'Icona da visualizzare a sinistra',
     },
     iconright: {
-      control: { type: 'boolean' },
-      description: 'Se presente icona a destra',
+      control: { type: 'select' },
+      options: [null, ...getAllIconTypes()],
+      description: 'Icona da visualizzare a destra',
     },
     iconsize: {
       control: { type: 'select' },
@@ -35,33 +38,44 @@ const meta = {
       control: { type: 'select' },
       options: ['pieno', 'contorno'],
     },
+    disabled: {
+      control: { type: 'boolean' },
+      description: 'Se disabilitato',
+    },
     label: {
       control: { type: 'text' },
     }
   },
   args: { onClick: fn() },
+  parameters: {
+    docs: {
+      description: {
+        component: `Vai al link del componente Button sul Figma: [link componente Button](https://www.figma.com/design/201b1LgGLEDCibrm9arMve/UI-KIT-Mondoconv?node-id=243-188&t=grO56kgmhjb5kRnO-4)`
+      }
+    }
+  }
 } satisfies Meta<ButtonProps>;
 
 export default meta;
 type Story = StoryObj<ButtonProps>;
 
-// More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const PrimarioSolido: Story = {
   args: {
-    iconleft: true,
-    iconright: true,
+    iconleft: 'tipo_freccia_sx',
+    iconright: 'tipo_freccia_dx',
     iconsize: 'small',
     width: 'fixed',
     variant: 'primario',
     type: 'pieno',
+    disabled: false,
     label: 'Testo',
   },
 };
 
 export const PrimarioContorno: Story = {
   args: {
-    iconleft: true,
-    iconright: true,
+    iconleft: 'tipo_freccia_sx',
+    iconright: 'tipo_freccia_dx',
     iconsize: 'small',
     width: 'fixed',
     variant: 'primario',
@@ -72,8 +86,8 @@ export const PrimarioContorno: Story = {
 
 export const SecondarioSolido: Story = {
   args: {
-    iconleft: true,
-    iconright: true,
+    iconleft: 'tipo_freccia_sx',
+    iconright: 'tipo_freccia_dx',
     iconsize: 'small',
     width: 'fixed',
     variant: 'secondario',
@@ -84,8 +98,8 @@ export const SecondarioSolido: Story = {
 
 export const SecondarioContorno: Story = {
   args: {
-    iconleft: true,
-    iconright: true,
+    iconleft: 'tipo_freccia_sx',
+    iconright: 'tipo_freccia_dx',
     iconsize: 'small',
     width: 'fixed',
     variant: 'secondario',
@@ -96,8 +110,8 @@ export const SecondarioContorno: Story = {
 
 export const TerziarioSolido: Story = {
   args: {
-    iconleft: true,
-    iconright: true,
+    iconleft: 'tipo_freccia_sx',
+    iconright: 'tipo_freccia_dx',
     iconsize: 'small',
     width: 'fixed',
     variant: 'terziario',
@@ -108,8 +122,8 @@ export const TerziarioSolido: Story = {
 
 export const DolcecasaSolido: Story = {
   args: {
-    iconleft: true,
-    iconright: true,
+    iconleft: 'tipo_freccia_sx',
+    iconright: 'tipo_freccia_dx',
     iconsize: 'small',
     width: 'fixed',
     variant: 'dolcecasa',
@@ -120,8 +134,8 @@ export const DolcecasaSolido: Story = {
 
 export const DolcecasaneroSolido: Story = {
   args: {
-    iconleft: true,
-    iconright: true,
+    iconleft: 'tipo_freccia_sx',
+    iconright: 'tipo_freccia_dx',
     iconsize: 'small',
     width: 'fixed',
     variant: 'dolcecasanero',
@@ -130,10 +144,23 @@ export const DolcecasaneroSolido: Story = {
   },
 };
 
+export const PrimarioSolidoDisabilitato: Story = {
+  args: {
+    iconleft: 'tipo_freccia_sx',
+    iconright: 'tipo_freccia_dx',
+    iconsize: 'small',
+    width: 'fixed',
+    variant: 'primario',
+    type: 'pieno',
+    disabled: true,
+    label: 'Testo',
+  },
+};
+
 export const CarrelloDesktop: Story = {
   args: {
-    iconleft: true,
-    iconright: false,
+    iconleft: 'tipo_carrello',
+    iconright: null,
     iconsize: 'medium',
     width: 'fitcontent',
     variant: 'primario',
@@ -144,8 +171,8 @@ export const CarrelloDesktop: Story = {
 
 export const CarrelloMobile: Story = {
   args: {
-    iconleft: true,
-    iconright: false,
+    iconleft: 'tipo_carrello',
+    iconright: null,
     iconsize: 'small',
     width: 'fitcontent',
     variant: 'primario',
