@@ -1,5 +1,5 @@
 const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./swiper-bTNwr3SU.js","./utils-DH6Lzeoh.js","./index-BI9D0mIr.js"])))=>i.map(i=>d[i]);
-import{_ as x}from"./iframe-DuBL8yFK.js";import{x as b}from"./lit-element-D_Wi02Oa.js";const T=()=>{if(typeof document<"u"&&!document.getElementById("swiper-core-styles")){const i=document.createElement("style");i.id="swiper-core-styles",i.textContent=`
+import{_ as x}from"./iframe-Cb_GfsRk.js";import{x as b}from"./lit-element-D_Wi02Oa.js";const T=()=>{if(typeof document<"u"&&!document.getElementById("swiper-core-styles")){const i=document.createElement("style");i.id="swiper-core-styles",i.textContent=`
       /* Stili base di Swiper */
       .swiper {
         margin-left: auto;
