@@ -1,4 +1,5 @@
-/* Nascondere il marker predefinito del sommario */
+@import "/index.css";
+
 summary::marker {
     content: "";
   }
