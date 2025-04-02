@@ -1,4 +1,4 @@
-import{x as e}from"./lit-element-D_Wi02Oa.js";import{i as r}from"./icon-D_WKR1UM.js";const L=({label:t="",open:i=!1,content:c="",customIcon:$=!1,onToggle:d})=>e`
+import{x as e}from"./lit-element-D_Wi02Oa.js";import{i as r}from"./icon-BKOcSNub.js";const L=({label:t="",open:i=!1,content:c="",customIcon:$=!1,onToggle:d})=>e`
     <div class="accordion">
       <details ?open=${i} @toggle=${b=>{const A=b.currentTarget;d&&d(A.open)}}>
         <summary class="accordion__summary">
