@@ -1,8 +1,8 @@
-import{x as p}from"./lit-element-D_Wi02Oa.js";import{i}from"./icon-BKOcSNub.js";const x={title:"Icon",tags:["autodocs"],argTypes:{type:{description:"Tipo di icona",control:{type:"select",options:["property_1_cross_selling","property_1_servizi_1","property_1_servizi_2","property_1_servizi_3","property_1_servizi_4","tipo_account","tipo_aiuto","tipo_angolo_occasioni_1","tipo_angolo_occasioni_2","tipo_area_personale","tipo_assistenza_1","tipo_assistenza_2","tipo_assistenza_3","tipo_assistenza_4","tipo_assistenza_5","tipo_assistenza_6","tipo_assistenza_7","tipo_assistenza_8","tipo_attenzione","tipo_avanti","tipo_buono_spesa","tipo_calendario","tipo_card_1","tipo_card_2","tipo_card_3","tipo_carosello_2_dx","tipo_carrello_2","tipo_carrello_1","tipo_carrello","tipo_catalogo","tipo_cestino","tipo_check_list","tipo_check","tipo_chiudi","tipo_come_acquistare","tipo_condividi","tipo_configuratori_slim","tipo_configuratori","tipo_download_2","tipo_download","tipo_facebook_login","tipo_facebook","tipo_filtri","tipo_filtro","tipo_freccia_alto","tipo_freccia_basso","tipo_freccia_carosel_dx","tipo_freccia_carosel_sx","tipo_freccia_carosello_dx","tipo_freccia_carosello_sx","tipo_freccia_dx","tipo_freccia_loop_carosel_dx","tipo_freccia_loop_carosel_sx","tipo_freccia_menu","tipo_freccia_piena_dx","tipo_freccia_piena_sx","tipo_freccia_sx","tipo_google_login","tipo_hamburger_menu","tipo_indietro","tipo_indirizzi","tipo_info_2","tipo_info","tipo_instagram","tipo_link","tipo_logout","tipo_menu","tipo_modifica","tipo_mostra_di_meno","tipo_mostra_di_pi","tipo_newsletter","tipo_notifica_appuntamento","tipo_notifica","tipo_ordini","tipo_pinterest","tipo_play","tipo_posizione","tipo_ricerca","tipo_ripristina_ordine","tipo_riproduci","tipo_servizi_1","tipo_servizi_2","tipo_servizi_3","tipo_servizi_4","tipo_tik_tok","tipo_tipo13","tipo_tipo51","tipo_torna_su","tipo_visibile","tipo_youtube"]}},size:{description:"Dimensione dell'icona",control:{type:"select",options:["small","medium","large"]}}}},e=y=>p`
+import{x as p}from"./lit-element-D_Wi02Oa.js";import{i}from"./icon-B2F652rT.js";const x={title:"Icon",tags:["autodocs"],argTypes:{type:{description:"Tipo di icona",control:{type:"select",options:["property_1_cross_selling_2","property_1_servizi_1","property_1_servizi_2","property_1_servizi_3","property_1_servizi_4","tipo_account","tipo_aiuto","tipo_angolo_occasioni_1","tipo_angolo_occasioni_2","tipo_area_personale","tipo_assistenza_1","tipo_assistenza_2","tipo_assistenza_3","tipo_assistenza_4","tipo_assistenza_5","tipo_assistenza_6","tipo_assistenza_7","tipo_assistenza_8","tipo_attenzione","tipo_avanti","tipo_buono_spesa","tipo_calendario","tipo_card_1","tipo_card_2","tipo_card_3","tipo_carosello_2_dx","tipo_carrello_2","tipo_carrello","tipo_catalogo","tipo_cestino","tipo_check_list","tipo_check","tipo_chiudi","tipo_come_acquistare","tipo_condividi","tipo_configuratori_slim","tipo_configuratori","tipo_download_2","tipo_download","tipo_facebook_login","tipo_facebook","tipo_filtri","tipo_filtro","tipo_freccia_alto","tipo_freccia_basso","tipo_freccia_carosel_dx","tipo_freccia_carosel_sx","tipo_freccia_carosello_dx","tipo_freccia_carosello_sx","tipo_freccia_dx","tipo_freccia_loop_carosel_dx","tipo_freccia_loop_carosel_sx","tipo_freccia_menu","tipo_freccia_piena_dx","tipo_freccia_piena_sx","tipo_freccia_sx","tipo_google_login","tipo_hamburger_menu","tipo_indietro","tipo_indirizzi","tipo_info_2","tipo_info","tipo_instagram","tipo_link","tipo_logout","tipo_menu","tipo_modifica","tipo_mostra_di_meno","tipo_mostra_di_pi","tipo_newsletter","tipo_notifica_appuntamento","tipo_notifica","tipo_ordini","tipo_pinterest","tipo_play","tipo_posizione","tipo_ricerca","tipo_ripristina_ordine","tipo_riproduci","tipo_servizi_1","tipo_servizi_2","tipo_servizi_3","tipo_servizi_4","tipo_tik_tok","tipo_tipo13","tipo_tipo51","tipo_torna_su","tipo_visibile","tipo_youtube"]}},size:{description:"Dimensione dell'icona",control:{type:"select",options:["small","medium","large"]}}}},e=y=>p`
   <div style="padding: 20px;">
     ${i(y)}
   </div>
-`;e.args={type:"property_1_cross_selling",size:"medium",color:"currentColor"};const t=()=>p`
+`;e.args={type:"property_1_cross_selling_2",size:"medium",color:"currentColor"};const t=()=>p`
   <div style="display: flex; align-items: center; gap: 20px; padding: 20px;">
     <div>
       <p>Small</p>
@@ -22,8 +22,8 @@ import{x as p}from"./lit-element-D_Wi02Oa.js";import{i}from"./icon-BKOcSNub.js";
     <h3>Galleria Icone</h3>
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 20px;">
       <div style="display: flex; flex-direction: column; align-items: center;">
-        <div>${i({type:"property_1_cross_selling"})}</div>
-        <p>property_1_cross_selling</p>
+        <div>${i({type:"property_1_cross_selling_2"})}</div>
+        <p>property_1_cross_selling_2</p>
       </div>
       <div style="display: flex; flex-direction: column; align-items: center;">
         <div>${i({type:"property_1_servizi_1"})}</div>
@@ -128,10 +128,6 @@ import{x as p}from"./lit-element-D_Wi02Oa.js";import{i}from"./icon-BKOcSNub.js";
       <div style="display: flex; flex-direction: column; align-items: center;">
         <div>${i({type:"tipo_carrello_2"})}</div>
         <p>tipo_carrello_2</p>
-      </div>
-      <div style="display: flex; flex-direction: column; align-items: center;">
-        <div>${i({type:"tipo_carrello_1"})}</div>
-        <p>tipo_carrello_1</p>
       </div>
       <div style="display: flex; flex-direction: column; align-items: center;">
         <div>${i({type:"tipo_carrello"})}</div>
@@ -417,9 +413,9 @@ import{x as p}from"./lit-element-D_Wi02Oa.js";import{i}from"./icon-BKOcSNub.js";
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 20px;">
       <div style="display: flex; flex-direction: column; align-items: center;">
         <div>\${icon({
-  type: 'property_1_cross_selling'
+  type: 'property_1_cross_selling_2'
 })}</div>
-        <p>property_1_cross_selling</p>
+        <p>property_1_cross_selling_2</p>
       </div>
       <div style="display: flex; flex-direction: column; align-items: center;">
         <div>\${icon({
@@ -576,12 +572,6 @@ import{x as p}from"./lit-element-D_Wi02Oa.js";import{i}from"./icon-BKOcSNub.js";
   type: 'tipo_carrello_2'
 })}</div>
         <p>tipo_carrello_2</p>
-      </div>
-      <div style="display: flex; flex-direction: column; align-items: center;">
-        <div>\${icon({
-  type: 'tipo_carrello_1'
-})}</div>
-        <p>tipo_carrello_1</p>
       </div>
       <div style="display: flex; flex-direction: column; align-items: center;">
         <div>\${icon({
