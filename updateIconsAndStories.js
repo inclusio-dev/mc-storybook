@@ -11,6 +11,7 @@ const __dirname = path.dirname(__filename);
 const svgFolderPath = path.join(__dirname, 'src/components/icon/iconedainserire');
 const iconSvgsFilePath = path.join(__dirname, 'src/components/icon/iconSvgs.ts');
 const storiesFilePath = path.join(__dirname, 'src/stories/icon.stories.ts');
+const debugMode = false; // Imposta a true per debugging
 
 // Funzione per verificare l'esistenza di file e cartelle
 function checkPaths() {
@@ -114,8 +115,8 @@ function readSvgFiles() {
   }
 }
 
-// Funzione per elaborare il contenuto SVG
-function processSvgContent(content) {
+// Funzione per elaborare il contenuto SVG in modo selettivo
+function processSvgContent(content, iconName) {
   // Rimuovi eventuali commenti e formatta il contenuto
   let processedContent = content
     .replace(/<!--[\s\S]*?-->/g, '') // Rimuovi commenti
@@ -124,36 +125,128 @@ function processSvgContent(content) {
     .trim();
     
   try {
-    // Sostituisci qualsiasi attributo fill con valore colore con currentColor
-    // Regex che corrisponde a fill="anycolor" ma esclude fill="none" e fill="currentColor"
-    processedContent = processedContent.replace(/fill="(?!none|currentColor)(#[0-9a-fA-F]{3,8}|[a-zA-Z]+)"/gi, 'fill="currentColor"');
+    // Colori neri (considerati elementi principali/sfondo) da sostituire con currentColor
+    const blackColors = [
+      '#000', '#000000', 'black', 'rgb(0,0,0)', 'rgba(0,0,0,1)', 'hsl(0,0%,0%)'
+    ];
     
-    // Sostituisci qualsiasi attributo stroke con valore colore con currentColor
-    // Regex che corrisponde a stroke="anycolor" ma esclude stroke="none" e stroke="currentColor"
-    processedContent = processedContent.replace(/stroke="(?!none|currentColor)(#[0-9a-fA-F]{3,8}|[a-zA-Z]+)"/gi, 'stroke="currentColor"');
+    // Crea pattern regex per i colori neri (escape di caratteri speciali)
+    const blackColorsPattern = blackColors
+      .map(color => color.replace(/([()%,])/g, '\\$1')) // Escape dei caratteri speciali
+      .join('|');
     
-    // Per gli elementi che non hanno fill, aggiungi fill="currentColor" solo se non hanno già uno stroke
-    const tagRegex = /<(path|circle|rect|polygon|ellipse|line|polyline)([^>]*?)(?:\s*\/)?>/g;
-    processedContent = processedContent.replace(tagRegex, (match, tag, attributes) => {
-      // Se non c'è già un attributo fill e non c'è nemmeno stroke, aggiungi fill
-      if (!attributes.includes('fill=') && !attributes.includes('stroke=')) {
-        return `<${tag}${attributes} fill="currentColor"${match.endsWith('/>') ? ' />' : '>'}`;
+    // 1. Sostituisci solo gli attributi fill con colori neri
+    const fillBlackRegex = new RegExp(
+      `fill\\s*=\\s*["'](${blackColorsPattern})["']`, 
+      'gi'
+    );
+    processedContent = processedContent.replace(fillBlackRegex, 'fill="currentColor"');
+    
+    // 2. Sostituisci solo gli attributi stroke con colori neri
+    const strokeBlackRegex = new RegExp(
+      `stroke\\s*=\\s*["'](${blackColorsPattern})["']`, 
+      'gi'
+    );
+    processedContent = processedContent.replace(strokeBlackRegex, 'stroke="currentColor"');
+    
+    // 3. Sostituisci colori neri in attributi di stile inline
+    processedContent = processedContent.replace(
+      /style\s*=\s*["']([^"']*)["']/gi, 
+      function(match, styleContent) {
+        // Sostituisci solo fill:black con fill:currentColor
+        let newStyleContent = styleContent.replace(
+          new RegExp(`(^|;)\\s*fill\\s*:\\s*(${blackColorsPattern})`, 'gi'),
+          '$1fill:currentColor'
+        );
+        // Sostituisci solo stroke:black con stroke:currentColor
+        newStyleContent = newStyleContent.replace(
+          new RegExp(`(^|;)\\s*stroke\\s*:\\s*(${blackColorsPattern})`, 'gi'),
+          '$1stroke:currentColor'
+        );
+        return `style="${newStyleContent}"`;
       }
-      return match;
-    });
+    );
     
-    // Log di debug per vedere i colori trovati
-    const colorMatches = [...processedContent.matchAll(/fill="(#[0-9a-fA-F]{3,8}|[a-zA-Z]+)"|stroke="(#[0-9a-fA-F]{3,8}|[a-zA-Z]+)"/g)];
-    if (colorMatches.length > 0) {
-      console.warn(`Attenzione: Alcuni colori potrebbero essere rimasti nell'icona.`);
+    // 4. Per gli elementi che non hanno attributi di colore, aggiungi fill="currentColor" solo se non hanno già altri attributi di stile
+    const svgElements = ['path', 'circle', 'rect', 'polygon', 'ellipse', 'line', 'polyline'];
+    
+    // Controlla la presenza di elementi principali per decidere come procedere
+    let hasMainElements = false;
+    let mainElementsCount = 0;
+    
+    // Prima scansione per contare quanti elementi hanno già colori neri applicati
+    for (const element of svgElements) {
+      const elemRegex = new RegExp(`<${element}[^>]*?(?:fill|stroke)\\s*=\\s*["'](${blackColorsPattern})["'][^>]*?>`, 'gi');
+      const matches = processedContent.match(elemRegex);
+      if (matches) {
+        mainElementsCount += matches.length;
+        hasMainElements = true;
+      }
+    }
+    
+    // Se non ci sono elementi neri principali, identifica l'elemento più grande come elemento principale
+    if (!hasMainElements && mainElementsCount === 0) {
+      console.log(`⚠️ Nessun elemento nero trovato in ${iconName}. Cercherò di identificare l'elemento principale.`);
+      
+      // Trova l'elemento path più grande (solitamente lo sfondo)
+      // Questo è un approccio euristico - potrebbe non funzionare per tutti gli SVG
+      let mainElementApplied = false;
+      
+      // Cerca path con attributi d lunghi (solitamente elementi più grandi/complessi)
+      processedContent = processedContent.replace(
+        /<path([^>]*?)d\s*=\s*["']([^"']{50,})["']([^>]*?)>/gi,
+        (match, beforeD, dValue, afterD) => {
+          // Applica solo al primo elemento path grande trovato
+          if (!mainElementApplied) {
+            // Verifica se non ha già un fill o uno stroke esplicito
+            if (!match.includes('fill=') && !match.includes('stroke=')) {
+              mainElementApplied = true;
+              return `<path${beforeD}d="${dValue}"${afterD} fill="currentColor">`;
+            }
+          }
+          return match;
+        }
+      );
+      
+      if (mainElementApplied) {
+        console.log(`✅ Elemento principale identificato e impostato a currentColor in ${iconName}`);
+      } else {
+        console.warn(`⚠️ Non è stato possibile identificare automaticamente l'elemento principale in ${iconName}`);
+      }
+    }
+    
+    // Verifica per tag style ed elimina o modifica
+    if (processedContent.includes('<style')) {
+      console.warn(`⚠️ L'icona ${iconName} contiene tag <style>. Questi potrebbero causare problemi.`);
+    }
+    
+    // Debug - salva file originale e processato per confronto
+    if (debugMode) {
+      saveDebugFiles(content, processedContent, iconName);
     }
     
   } catch (error) {
-    // In caso di errore, restituisci l'SVG originale solo formattato
-    console.warn(`Attenzione: problema durante l'elaborazione di un SVG. Utilizzo versione originale.`);
+    console.warn(`⚠️ Problema durante l'elaborazione dell'SVG ${iconName}: ${error.message}`);
+    console.warn('Utilizzo versione originale formattata');
   }
   
   return processedContent;
+}
+
+// Funzione di utilità per debug - salvare file SVG originale e modificato per confronto
+function saveDebugFiles(originalContent, processedContent, iconName) {
+  try {
+    const debugDir = path.join(__dirname, 'debug_svg');
+    if (!fs.existsSync(debugDir)) {
+      fs.mkdirSync(debugDir, { recursive: true });
+    }
+    
+    fs.writeFileSync(path.join(debugDir, `${iconName}_original.svg`), originalContent, 'utf8');
+    fs.writeFileSync(path.join(debugDir, `${iconName}_processed.svg`), processedContent, 'utf8');
+    console.log(`File di debug salvati per l'icona ${iconName}`);
+  } catch (err) {
+    console.warn(`Impossibile salvare file di debug: ${err.message}`);
+  }
 }
 
 // Funzione principale per ricaricare completamente il file delle icone
@@ -163,6 +256,7 @@ function reloadIconsFile() {
   // Crea le entry per le icone
   let iconEntries = '';
   const processedIcons = [];
+  let errorCount = 0;
   
   for (const svgFile of svgFiles) {
     const filePath = path.join(svgFolderPath, svgFile);
@@ -174,7 +268,15 @@ function reloadIconsFile() {
     
     try {
       const svgContent = fs.readFileSync(filePath, 'utf8');
-      const processedContent = processSvgContent(svgContent);
+      
+      // Verifica se il file SVG è valido
+      if (!svgContent.includes('<svg') || !svgContent.includes('</svg>')) {
+        console.error(`❌ Il file ${svgFile} non sembra essere un SVG valido.`);
+        errorCount++;
+        continue;
+      }
+      
+      const processedContent = processSvgContent(svgContent, iconName);
       
       iconEntries += `
   // Icona ${iconName} (da ${svgFile})
@@ -185,7 +287,8 @@ function reloadIconsFile() {
         name: iconName
       });
     } catch (error) {
-      console.error(`Errore nella lettura del file ${svgFile}:`, error);
+      console.error(`❌ Errore nella lettura del file ${svgFile}:`, error);
+      errorCount++;
     }
   }
   
@@ -208,7 +311,13 @@ function reloadIconsFile() {
     }
     
     fs.writeFileSync(iconSvgsFilePath, fileTemplate, 'utf8');
-    console.log(`\n✅ File ${iconSvgsFilePath} completamente ricaricato con ${processedIcons.length} icone!`);
+    
+    if (errorCount > 0) {
+      console.log(`\n⚠️ File ${iconSvgsFilePath} completato con ${processedIcons.length} icone, ma con ${errorCount} errori!`);
+    } else {
+      console.log(`\n✅ File ${iconSvgsFilePath} completamente ricaricato con ${processedIcons.length} icone!`);
+    }
+    
     console.log('\nIcone aggiunte:');
     processedIcons.forEach(icon => {
       console.log(` - ${icon.original} => ${icon.name}`);
@@ -320,7 +429,12 @@ async function main() {
     
     console.log('\n🎉 Processo completato con successo!');
     console.log('Le icone precedenti sono state rimosse e sostituite con quelle nella cartella iconadainserire.');
-    console.log('Tutti i colori negli SVG sono stati sostituiti con currentColor.');
+    console.log('Solo gli elementi neri principali sono stati convertiti in currentColor per mantenere i dettagli.');
+    
+    if (debugMode) {
+      console.log('\nModalità debug: i file originali e processati sono stati salvati nella cartella "debug_svg".');
+    }
+    
     console.log('\nOra puoi utilizzare queste icone nel tuo codice:');
     
     if (icons.length > 0) {
