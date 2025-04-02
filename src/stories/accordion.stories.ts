@@ -84,3 +84,90 @@ WithLongContent.storyName = 'Con Contenuto Lungo';
 WithLongContent.args = {
   ...Default.args
 };
+
+// Definizione dei dati per la lista di accordion
+const accordionListItems = [
+  {
+    label: 'Primo Accordion',
+    content: html`<p>Contenuto del primo accordion nella lista.</p>`,
+    open: false,
+    customIcon: true
+  },
+  {
+    label: 'Secondo Accordion',
+    content: html`
+      <p>Contenuto del secondo accordion nella lista.</p>
+      <ul>
+        <li>Sottoelemento 1</li>
+        <li>Sottoelemento 2</li>
+      </ul>
+    `,
+    open: false,
+    customIcon: true
+  },
+  {
+    label: 'Terzo Accordion',
+    content: html`
+      <p>Contenuto del terzo accordion nella lista con più elementi.</p>
+      <p>Questo accordion ha più contenuti per mostrare la flessibilità.</p>
+    `,
+    open: false,
+    customIcon: true
+  },
+  {
+    label: 'Quarto Accordion',
+    content: html`<p>Contenuto del primo accordion nella lista.</p>`,
+    open: false,
+    customIcon: true
+  },
+  {
+    label: 'Quinto Accordion',
+    content: html`
+      <p>Contenuto del secondo accordion nella lista.</p>
+      <ul>
+        <li>Sottoelemento 1</li>
+        <li>Sottoelemento 2</li>
+      </ul>
+    `,
+    open: false,
+    customIcon: true
+  },
+  {
+    label: 'Sesto Accordion',
+    content: html`
+      <p>Contenuto del terzo accordion nella lista con più elementi.</p>
+      <p>Questo accordion ha più contenuti per mostrare la flessibilità.</p>
+    `,
+    open: false,
+    customIcon: true
+  }
+];
+
+// Template per la lista di accordion
+const AccordionListTemplate: StoryFn = () => html`
+  <div style="max-width: 365px; margin: 0 auto;">
+    <ul class="accordion-list" style="list-style-type: none; padding: 0;">
+      ${accordionListItems.map(item => html`
+        <li>
+          ${accordion({
+            label: item.label,
+            content: item.content,
+            open: item.open,
+            customIcon: item.customIcon,
+            onToggle: (isOpen) => console.log(`${item.label} toggled:`, isOpen)
+          })}
+        </li>
+      `)}
+    </ul>
+  </div>
+`;
+
+export const AccordionList = AccordionListTemplate.bind({});
+AccordionList.storyName = 'Lista di Accordion';
+AccordionList.parameters = {
+  docs: {
+    description: {
+      story: 'Questo esempio mostra come utilizzare più accordion all\'interno di una lista per creare un menu a più livelli o una FAQ.'
+    }
+  }
+};

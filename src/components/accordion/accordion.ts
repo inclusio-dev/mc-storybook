@@ -31,11 +31,11 @@ export const accordion = ({
           ${customIcon ? html`<span class="accordion__icon"> ${icon({ type: 'tipo_posizione', size: 'medium' })} </span>` : null}
           <span class="accordion__label">${label}</span>
           <span class="accordion__icon">
-            <span class="tipo_freccia_alto">
-              ${icon({ type: 'tipo_freccia_alto', size: 'medium' })}
-            </span>
             <span class="tipo_freccia_basso">
               ${icon({ type: 'tipo_freccia_basso', size: 'medium' })}
+            </span>
+            <span class="tipo_freccia_alto">
+              ${icon({ type: 'tipo_freccia_alto', size: 'medium' })}
             </span>
           </span>
         </summary>

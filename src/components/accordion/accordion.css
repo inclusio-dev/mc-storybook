@@ -50,10 +50,10 @@ summary::marker {
     padding: 0 16px 16px;
   }
   
-  details:not([open]) .tipo_freccia_basso {
+  details:not([open]) .tipo_freccia_alto {
     display: none;
   }
   
-  details[open] .tipo_freccia_alto {
+  details[open] .tipo_freccia_basso {
     display: none;
   }
