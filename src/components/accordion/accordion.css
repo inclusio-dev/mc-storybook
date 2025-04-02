@@ -5,9 +5,8 @@ summary::marker {
   
   .accordion {
     font-family: var(--font-family, sans-serif);
-    border: 1px solid var(--accordion-border-color, #e0e0e0);
-    border-radius: var(--accordion-border-radius, 4px);
-    background-color: var(--accordion-background, #ffffff);
+    border-bottom: 1px solid var( --base-60);
+    background-color: var(--base-bianco);
     overflow: hidden;
     width: 100%;
   }
@@ -41,10 +40,19 @@ summary::marker {
     justify-content: center;
     transition: transform 0.3s ease;
   }
+
+  summary > span:nth-child(1).accordion__icon{
+    padding-right: 1.5rem;
+  }
   
   .accordion__content {
     padding: 0 16px 16px;
   }
   
-  /* Rimuoviamo la rotazione dell'icona, 
-     ora gestiamo il cambio icona direttamente dal componente */
+  details:not([open]) .tipo_freccia_basso {
+    display: none;
+  }
+  
+  details[open] .tipo_freccia_alto {
+    display: none;
+  }

@@ -4,10 +4,12 @@ import { accordion, AccordionProps } from '@/components/accordion/accordion';
 import '@/components/accordion/accordion.css';
 
 export default {
-  title: 'Components/Accordion',
+  title: 'Accordion',
+  tags: ['autodocs'],
   argTypes: {
-    label: { control: 'text' },
-    open: { control: 'boolean' },
+    label: { control: 'text', description: 'Testo del pulsante di apertura dell accordion', },
+    open: { control: 'boolean', description: 'Stato dell accordion', },
+    customIcon: { control: 'boolean', description: 'Se presente icona a sinistra', },
     onToggle: { action: 'toggled' }
   },
 } as Meta;
@@ -23,7 +25,7 @@ const Template: StoryFn<AccordionProps> = (args) => {
       ${accordion({
         ...args,
         content: contentHtml,
-        onToggle: (isOpen) => console.log('Accordion toggled:', isOpen)
+        onToggle: (isOpen) => console.log('Accordion toggled:', isOpen),
       })}
     </div>
   `;
@@ -33,6 +35,7 @@ export const Default = Template.bind({});
 Default.args = {
   label: 'Accordion Title',
   open: false,
+  customIcon: false,
 };
 
 export const OpenByDefault = Template.bind({});
@@ -44,6 +47,7 @@ OpenByDefault.args = {
 export const WithCustomIcons = Template.bind({});
 WithCustomIcons.args = {
   ...Default.args,
+  customIcon: true,
 };
 
 // Definizione del contenuto lungo fuori dalla funzione decoratore

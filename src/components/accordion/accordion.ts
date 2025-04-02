@@ -1,13 +1,13 @@
 import { html } from 'lit';
 import './accordion.css';
 import { icon } from '@/components/icon/icon';
-import { render } from 'lit-html';
 import { TemplateResult } from 'lit';
 
 export interface AccordionProps {
   label: string;
   open?: boolean;
   content?: string | HTMLElement | TemplateResult;
+  customIcon?: boolean,
   onToggle?: (isOpen: boolean) => void;
 }
 
@@ -15,40 +15,28 @@ export const accordion = ({
   label = '', 
   open = false, 
   content = '', 
+  customIcon = false,
   onToggle 
 }: AccordionProps) => {
   
-  const handleToggle = (e: Event) => {
-    const details = e.currentTarget as HTMLDetailsElement;
-    const iconContainer = details.querySelector('.accordion__icon') as HTMLElement;
-    
-
-   /*  if (iconContainer.firstChild) {
-      iconContainer.removeChild(iconContainer.firstChild);
-    } */
-  
-    //iconContainer.innerHTML = '';
-    // Aggiorna l'icona in base allo stato attuale
-    if (details.open) {
-      // Accordion aperto - mostra l'icona "tipo_freccia_basso"
-      render(icon({ type: 'tipo_freccia_basso', size: 'medium' }), iconContainer);
-    } else {
-      // Accordion chiuso - mostra l'icona "tipo_freccia_alto"
-      render(icon({ type: 'tipo_freccia_alto', size: 'medium' }), iconContainer);
-    }
-    
-    if (onToggle) {
-      onToggle(details.open);
-    }
-  };
-
   return html`
     <div class="accordion">
-      <details ?open=${open} @toggle=${handleToggle}>
+      <details ?open=${open} @toggle=${(e: Event) => {
+        const details = e.currentTarget as HTMLDetailsElement;
+        if (onToggle) {
+          onToggle(details.open);
+        }
+      }}>
         <summary class="accordion__summary">
+          ${customIcon ? html`<span class="accordion__icon"> ${icon({ type: 'tipo_posizione', size: 'medium' })} </span>` : null}
           <span class="accordion__label">${label}</span>
           <span class="accordion__icon">
-            ${icon({ type: 'tipo_freccia_basso', size: 'medium' }) }
+            <span class="tipo_freccia_alto">
+              ${icon({ type: 'tipo_freccia_alto', size: 'medium' })}
+            </span>
+            <span class="tipo_freccia_basso">
+              ${icon({ type: 'tipo_freccia_basso', size: 'medium' })}
+            </span>
           </span>
         </summary>
         <div class="accordion__content">
