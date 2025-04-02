@@ -12,6 +12,13 @@ export default {
     customIcon: { control: 'boolean', description: 'Se presente icona a sinistra', },
     onToggle: { action: 'toggled' }
   },
+  parameters: {
+    docs: {
+      description: {
+        component: `Vai al link del componente Accordion sul Figma: [link componente Accordion](https://www.figma.com/design/201b1LgGLEDCibrm9arMve/UI-KIT-Mondoconv?node-id=399-646)`
+      }
+    }
+  }
 } as Meta;
 
 const Template: StoryFn<AccordionProps> = (args) => {
@@ -38,14 +45,14 @@ Default.args = {
   customIcon: false,
 };
 
-export const OpenByDefault = Template.bind({});
-OpenByDefault.args = {
+export const ApertoByDefault = Template.bind({});
+ApertoByDefault.args = {
   ...Default.args,
   open: true,
 };
 
-export const WithCustomIcons = Template.bind({});
-WithCustomIcons.args = {
+export const ConIcona = Template.bind({});
+ConIcona.args = {
   ...Default.args,
   customIcon: true,
 };
@@ -73,7 +80,7 @@ const LongContentTemplate: StoryFn<AccordionProps> = (args) => html`
 `;
 
 export const WithLongContent = LongContentTemplate.bind({});
-WithLongContent.storyName = 'With Long Content';
+WithLongContent.storyName = 'Con Contenuto Lungo';
 WithLongContent.args = {
   ...Default.args
 };
