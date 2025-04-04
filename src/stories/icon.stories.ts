@@ -48,15 +48,15 @@ export const Sizes = () => html`
   <div style="display: flex; align-items: center; gap: 20px; padding: 20px;">
     <div>
       <p>Small</p>
-      ${icon({ type: 'property_1_cross_selling', size: 'small' })}
+      ${icon({ type: 'property_1_cross_selling_2', size: 'small' })}
     </div>
     <div>
       <p>Medium</p>
-      ${icon({ type: 'property_1_cross_selling', size: 'medium' })}
+      ${icon({ type: 'property_1_cross_selling_2', size: 'medium' })}
     </div>
     <div>
       <p>Large</p>
-      ${icon({ type: 'property_1_cross_selling', size: 'large' })}
+      ${icon({ type: 'property_1_cross_selling_2', size: 'large' })}
     </div>
   </div>
 `;
