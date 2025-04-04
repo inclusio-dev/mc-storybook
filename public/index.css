@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
 :root {
     --base-nero: #000000;
@@ -20,11 +21,12 @@
     --dolcecasa-nero: #333333;
     --findomestic: #008C3F;
     --font-family: "Montserrat", sans-serif;
+    --font-family-menu: "Roboto", sans-serif;
     --font-size-default: 14px;
     --gap: 1rem;
 }
 
-* {
+body, body button, body input {
     font-family: var(--font-family);
 }
 
