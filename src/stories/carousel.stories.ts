@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/web-components';
-import { carousel, CarouselProps } from '@/components/carousel/carousel';
+import { carousel, CarouselProps, NavigationButtonPosition } from '@/components/carousel/carousel';
 import '@/components/carousel/carousel.css';
 
 export default {
@@ -69,6 +69,12 @@ export default {
       description: 'Mostra/nascondi le didascalie delle slide',
       defaultValue: true,
     },
+    navigationButtonPosition: {
+      control: 'radio',
+      options: [NavigationButtonPosition.OVERLAY, NavigationButtonPosition.OUTSIDE],
+      description: 'Posizione dei pulsanti di navigazione (sovrapposti o esterni)',
+      defaultValue: NavigationButtonPosition.OVERLAY,
+    },
     slides: {
       control: 'object',
       description: 'Array di oggetti slide con proprietà image, alt, title e caption',
@@ -90,6 +96,7 @@ export default {
   - **spaceBetween**: regola lo spazio tra le slide
   - **showPagination**: mostra o nasconde i punti di navigazione
   - **showCaptions**: mostra o nasconde le didascalie delle immagini
+  - **navigationButtonPosition**: imposta la posizione dei pulsanti di navigazione (overlay o outside)
   
   ### Caratteristiche di accessibilità
   - **Navigazione da tastiera**: utilizzare le frecce sinistra/destra per navigare, Home/End per la prima/ultima slide
@@ -117,46 +124,39 @@ type Story = StoryObj<CarouselProps>;
 // Dati di esempio per tutte le storie
 const sampleSlides = [
   {
-    image: 'https://s3-alpha-sig.figma.com/img/027e/a82d/45ec7620cce609e308b6f1004373c00d?Expires=1743379200&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Spq-Fq94m~HLDr4wMHj4FGgfakls2HxZwj5V2~kuUJZ0n4Wlt4WVlLrTOv7Rd6os5dWzHTEVm-ISmB61~1i~xTI7FNWqhTGfPU0iiDRw-kpC915ewkFUKk7TARrWoroRFZG18RquAjArqztkzyZINnVMoNDZTvNPF5xBY5AAHbnMPvK~TxuGYf4QzIJbmKWGYBKkhwbFsNV-yyv4d8uNuKDDkFMJoNckoCbUS9VGkKnooFn3aYK402JaldkvLTAnt1IsbZBKjvYhYIhz0gqbXnG-yLkMjwvVdmlYK-Ti0pVNc7A4PIuTXoLL11QwIzc10PXmQkRcQ7NB0~a5LTbsow__',
-    alt: 'Descrizione della prima immagine',
-    title: 'Slide 1',
-    caption: 'Slide 1'
+    image: 'https://s3-alpha-sig.figma.com/img/cc27/81af/b14cbd720508f1fe1d84958268bdb889?Expires=1744588800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=WLnx4HLOIrz0bYkWf0Bt02jiWXoTaPhtqorhBtl9e0ZonLJkGcK2WOI6gyMr2nvXwktj8ZJFST066zkt~FTuQFm-GLfhuh3xBeXDT5lzsSLb2OiXek4mVuQ9wv06p591BvKK7xhfd7GDNm4hBLo1DLDvmKz5UjiJkSMs3e2R94t7Q-AMzlvH83lj1oogrV57sv2wL7nDL8CrxmVfJL5cbPCw1JFOoojCrAurvhoKvORuDyXabkH5S7qSKHk7-9GSii77iS3PC7dS7nJ0b00aHk03-~kwWZ0a2yFQ9fFr1N861T3W7Z4TL38IDZJgyT6qpKI~H8oLtYdzX8amciOENg__',
+    caption: 'Titolo prodotto carousel1',
+    href: '#'
   },
   {
-    image: 'https://s3-alpha-sig.figma.com/img/027e/a82d/45ec7620cce609e308b6f1004373c00d?Expires=1743379200&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Spq-Fq94m~HLDr4wMHj4FGgfakls2HxZwj5V2~kuUJZ0n4Wlt4WVlLrTOv7Rd6os5dWzHTEVm-ISmB61~1i~xTI7FNWqhTGfPU0iiDRw-kpC915ewkFUKk7TARrWoroRFZG18RquAjArqztkzyZINnVMoNDZTvNPF5xBY5AAHbnMPvK~TxuGYf4QzIJbmKWGYBKkhwbFsNV-yyv4d8uNuKDDkFMJoNckoCbUS9VGkKnooFn3aYK402JaldkvLTAnt1IsbZBKjvYhYIhz0gqbXnG-yLkMjwvVdmlYK-Ti0pVNc7A4PIuTXoLL11QwIzc10PXmQkRcQ7NB0~a5LTbsow__',
-    alt: 'Descrizione della seconda immagine',
-    title: 'Slide 2',
-    caption: 'Slide 2'
+    image: 'https://s3-alpha-sig.figma.com/img/cc27/81af/b14cbd720508f1fe1d84958268bdb889?Expires=1744588800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=WLnx4HLOIrz0bYkWf0Bt02jiWXoTaPhtqorhBtl9e0ZonLJkGcK2WOI6gyMr2nvXwktj8ZJFST066zkt~FTuQFm-GLfhuh3xBeXDT5lzsSLb2OiXek4mVuQ9wv06p591BvKK7xhfd7GDNm4hBLo1DLDvmKz5UjiJkSMs3e2R94t7Q-AMzlvH83lj1oogrV57sv2wL7nDL8CrxmVfJL5cbPCw1JFOoojCrAurvhoKvORuDyXabkH5S7qSKHk7-9GSii77iS3PC7dS7nJ0b00aHk03-~kwWZ0a2yFQ9fFr1N861T3W7Z4TL38IDZJgyT6qpKI~H8oLtYdzX8amciOENg__',
+    caption: 'Titolo prodotto carousel2',
+    href: '#'
   },
   {
-    image: 'https://s3-alpha-sig.figma.com/img/027e/a82d/45ec7620cce609e308b6f1004373c00d?Expires=1743379200&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Spq-Fq94m~HLDr4wMHj4FGgfakls2HxZwj5V2~kuUJZ0n4Wlt4WVlLrTOv7Rd6os5dWzHTEVm-ISmB61~1i~xTI7FNWqhTGfPU0iiDRw-kpC915ewkFUKk7TARrWoroRFZG18RquAjArqztkzyZINnVMoNDZTvNPF5xBY5AAHbnMPvK~TxuGYf4QzIJbmKWGYBKkhwbFsNV-yyv4d8uNuKDDkFMJoNckoCbUS9VGkKnooFn3aYK402JaldkvLTAnt1IsbZBKjvYhYIhz0gqbXnG-yLkMjwvVdmlYK-Ti0pVNc7A4PIuTXoLL11QwIzc10PXmQkRcQ7NB0~a5LTbsow__',
-    alt: 'Descrizione della terza immagine',
-    title: 'Slide 3',
-    caption: 'Slide 3'
+    image: 'https://s3-alpha-sig.figma.com/img/cc27/81af/b14cbd720508f1fe1d84958268bdb889?Expires=1744588800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=WLnx4HLOIrz0bYkWf0Bt02jiWXoTaPhtqorhBtl9e0ZonLJkGcK2WOI6gyMr2nvXwktj8ZJFST066zkt~FTuQFm-GLfhuh3xBeXDT5lzsSLb2OiXek4mVuQ9wv06p591BvKK7xhfd7GDNm4hBLo1DLDvmKz5UjiJkSMs3e2R94t7Q-AMzlvH83lj1oogrV57sv2wL7nDL8CrxmVfJL5cbPCw1JFOoojCrAurvhoKvORuDyXabkH5S7qSKHk7-9GSii77iS3PC7dS7nJ0b00aHk03-~kwWZ0a2yFQ9fFr1N861T3W7Z4TL38IDZJgyT6qpKI~H8oLtYdzX8amciOENg__',
+    caption: 'Titolo prodotto carousel3',
+    href: '#'
   },
   {
-    image: 'https://s3-alpha-sig.figma.com/img/027e/a82d/45ec7620cce609e308b6f1004373c00d?Expires=1743379200&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Spq-Fq94m~HLDr4wMHj4FGgfakls2HxZwj5V2~kuUJZ0n4Wlt4WVlLrTOv7Rd6os5dWzHTEVm-ISmB61~1i~xTI7FNWqhTGfPU0iiDRw-kpC915ewkFUKk7TARrWoroRFZG18RquAjArqztkzyZINnVMoNDZTvNPF5xBY5AAHbnMPvK~TxuGYf4QzIJbmKWGYBKkhwbFsNV-yyv4d8uNuKDDkFMJoNckoCbUS9VGkKnooFn3aYK402JaldkvLTAnt1IsbZBKjvYhYIhz0gqbXnG-yLkMjwvVdmlYK-Ti0pVNc7A4PIuTXoLL11QwIzc10PXmQkRcQ7NB0~a5LTbsow__',
-    alt: 'Descrizione della quarta immagine',
-    title: 'Slide 4',
-    caption: 'Slide 4'
+    image: 'https://s3-alpha-sig.figma.com/img/cc27/81af/b14cbd720508f1fe1d84958268bdb889?Expires=1744588800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=WLnx4HLOIrz0bYkWf0Bt02jiWXoTaPhtqorhBtl9e0ZonLJkGcK2WOI6gyMr2nvXwktj8ZJFST066zkt~FTuQFm-GLfhuh3xBeXDT5lzsSLb2OiXek4mVuQ9wv06p591BvKK7xhfd7GDNm4hBLo1DLDvmKz5UjiJkSMs3e2R94t7Q-AMzlvH83lj1oogrV57sv2wL7nDL8CrxmVfJL5cbPCw1JFOoojCrAurvhoKvORuDyXabkH5S7qSKHk7-9GSii77iS3PC7dS7nJ0b00aHk03-~kwWZ0a2yFQ9fFr1N861T3W7Z4TL38IDZJgyT6qpKI~H8oLtYdzX8amciOENg__',
+    caption: 'Titolo prodotto carousel4',
+    href: '#'
   },
   {
-    image: 'https://s3-alpha-sig.figma.com/img/027e/a82d/45ec7620cce609e308b6f1004373c00d?Expires=1743379200&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Spq-Fq94m~HLDr4wMHj4FGgfakls2HxZwj5V2~kuUJZ0n4Wlt4WVlLrTOv7Rd6os5dWzHTEVm-ISmB61~1i~xTI7FNWqhTGfPU0iiDRw-kpC915ewkFUKk7TARrWoroRFZG18RquAjArqztkzyZINnVMoNDZTvNPF5xBY5AAHbnMPvK~TxuGYf4QzIJbmKWGYBKkhwbFsNV-yyv4d8uNuKDDkFMJoNckoCbUS9VGkKnooFn3aYK402JaldkvLTAnt1IsbZBKjvYhYIhz0gqbXnG-yLkMjwvVdmlYK-Ti0pVNc7A4PIuTXoLL11QwIzc10PXmQkRcQ7NB0~a5LTbsow__',
-    alt: 'Descrizione della quinta immagine',
-    title: 'Slide 5',
-    caption: 'Slide 5'
+    image: 'https://s3-alpha-sig.figma.com/img/cc27/81af/b14cbd720508f1fe1d84958268bdb889?Expires=1744588800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=WLnx4HLOIrz0bYkWf0Bt02jiWXoTaPhtqorhBtl9e0ZonLJkGcK2WOI6gyMr2nvXwktj8ZJFST066zkt~FTuQFm-GLfhuh3xBeXDT5lzsSLb2OiXek4mVuQ9wv06p591BvKK7xhfd7GDNm4hBLo1DLDvmKz5UjiJkSMs3e2R94t7Q-AMzlvH83lj1oogrV57sv2wL7nDL8CrxmVfJL5cbPCw1JFOoojCrAurvhoKvORuDyXabkH5S7qSKHk7-9GSii77iS3PC7dS7nJ0b00aHk03-~kwWZ0a2yFQ9fFr1N861T3W7Z4TL38IDZJgyT6qpKI~H8oLtYdzX8amciOENg__',
+    caption: 'Titolo prodotto carousel5',
+    href: '#'
   },
   {
-    image: 'https://s3-alpha-sig.figma.com/img/027e/a82d/45ec7620cce609e308b6f1004373c00d?Expires=1743379200&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Spq-Fq94m~HLDr4wMHj4FGgfakls2HxZwj5V2~kuUJZ0n4Wlt4WVlLrTOv7Rd6os5dWzHTEVm-ISmB61~1i~xTI7FNWqhTGfPU0iiDRw-kpC915ewkFUKk7TARrWoroRFZG18RquAjArqztkzyZINnVMoNDZTvNPF5xBY5AAHbnMPvK~TxuGYf4QzIJbmKWGYBKkhwbFsNV-yyv4d8uNuKDDkFMJoNckoCbUS9VGkKnooFn3aYK402JaldkvLTAnt1IsbZBKjvYhYIhz0gqbXnG-yLkMjwvVdmlYK-Ti0pVNc7A4PIuTXoLL11QwIzc10PXmQkRcQ7NB0~a5LTbsow__',
-    alt: 'Descrizione della sesta immagine',
-    title: 'Slide 6',
-    caption: 'Slide 6'
+    image: 'https://s3-alpha-sig.figma.com/img/cc27/81af/b14cbd720508f1fe1d84958268bdb889?Expires=1744588800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=WLnx4HLOIrz0bYkWf0Bt02jiWXoTaPhtqorhBtl9e0ZonLJkGcK2WOI6gyMr2nvXwktj8ZJFST066zkt~FTuQFm-GLfhuh3xBeXDT5lzsSLb2OiXek4mVuQ9wv06p591BvKK7xhfd7GDNm4hBLo1DLDvmKz5UjiJkSMs3e2R94t7Q-AMzlvH83lj1oogrV57sv2wL7nDL8CrxmVfJL5cbPCw1JFOoojCrAurvhoKvORuDyXabkH5S7qSKHk7-9GSii77iS3PC7dS7nJ0b00aHk03-~kwWZ0a2yFQ9fFr1N861T3W7Z4TL38IDZJgyT6qpKI~H8oLtYdzX8amciOENg__',
+    caption: 'Titolo prodotto carousel6',
+    href: '#'
   },
   {
-    image: 'https://s3-alpha-sig.figma.com/img/027e/a82d/45ec7620cce609e308b6f1004373c00d?Expires=1743379200&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Spq-Fq94m~HLDr4wMHj4FGgfakls2HxZwj5V2~kuUJZ0n4Wlt4WVlLrTOv7Rd6os5dWzHTEVm-ISmB61~1i~xTI7FNWqhTGfPU0iiDRw-kpC915ewkFUKk7TARrWoroRFZG18RquAjArqztkzyZINnVMoNDZTvNPF5xBY5AAHbnMPvK~TxuGYf4QzIJbmKWGYBKkhwbFsNV-yyv4d8uNuKDDkFMJoNckoCbUS9VGkKnooFn3aYK402JaldkvLTAnt1IsbZBKjvYhYIhz0gqbXnG-yLkMjwvVdmlYK-Ti0pVNc7A4PIuTXoLL11QwIzc10PXmQkRcQ7NB0~a5LTbsow__',
-    alt: 'Descrizione della settima immagine',
-    title: 'Slide 7',
-    caption: 'Slide 7'
+    image: 'https://s3-alpha-sig.figma.com/img/cc27/81af/b14cbd720508f1fe1d84958268bdb889?Expires=1744588800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=WLnx4HLOIrz0bYkWf0Bt02jiWXoTaPhtqorhBtl9e0ZonLJkGcK2WOI6gyMr2nvXwktj8ZJFST066zkt~FTuQFm-GLfhuh3xBeXDT5lzsSLb2OiXek4mVuQ9wv06p591BvKK7xhfd7GDNm4hBLo1DLDvmKz5UjiJkSMs3e2R94t7Q-AMzlvH83lj1oogrV57sv2wL7nDL8CrxmVfJL5cbPCw1JFOoojCrAurvhoKvORuDyXabkH5S7qSKHk7-9GSii77iS3PC7dS7nJ0b00aHk03-~kwWZ0a2yFQ9fFr1N861T3W7Z4TL38IDZJgyT6qpKI~H8oLtYdzX8amciOENg__',
+    caption: 'Titolo prodotto carousel7',
+    href: '#'
   }
 ];
 
@@ -171,7 +171,8 @@ export const Default: Story = {
     spaceBetween: 20,
     centeredSlides: false,
     showPagination: true,
-    showCaptions: false
+    showCaptions: true,
+    navigationButtonPosition: NavigationButtonPosition.OVERLAY
   },
 };
 
@@ -183,15 +184,16 @@ export const FiveSlides: Story = {
     delay: 5000,
     multiSlide: true,
     slidesPerView: 5,
-    spaceBetween: 20,
+    spaceBetween: 30,
     centeredSlides: false,
     showPagination: false,
-    showCaptions: true
+    showCaptions: true,
+    navigationButtonPosition: NavigationButtonPosition.OUTSIDE
   },
   parameters: {
     docs: {
       description: {
-        story: 'Carosello con visualizzazione di 3 slide contemporaneamente e più spazio tra di esse.'
+        story: 'Carosello con visualizzazione di 5 slide contemporaneamente con immagini di dimensioni 200x120px.'
       },
     },
   },
@@ -206,6 +208,26 @@ export const WithAutoplay: Story = {
     docs: {
       description: {
         story: 'Carosello multi-slide con riproduzione automatica attivata. Si mette in pausa quando l\'utente interagisce con esso.'
+      },
+    },
+  },
+};
+
+export const OutsideNavigation: Story = {
+  args: {
+    slides: sampleSlides,
+    autoplay: false,
+    loop: true,
+    multiSlide: true,
+    slidesPerView: 3,
+    spaceBetween: 20,
+    showCaptions: true,
+    navigationButtonPosition: NavigationButtonPosition.OUTSIDE
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Carosello con pulsanti di navigazione posizionati all\'esterno dell\'area delle slide, con un padding di 2rem dai bordi.'
       },
     },
   },

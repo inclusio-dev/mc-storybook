@@ -1,239 +1,308 @@
-@import '/index.css';
-
+/* Core carousel styles */
 .carousel-container {
-    display: block;
-    margin: 0 auto;
-    max-width: 800px;
-    position: relative;
-  }
-  
-  /* Variabili per personalizzare facilmente i colori */
-  :root {
-    --swiper-navigation-color: var(--base-bianco);
-    --swiper-outline-color: #007aff;
-    --swiper-pagination-color: var(--primario-base);
-  }
-  
-  .swiper {
-    width: 100%;
-    height: auto;
-    position: relative;
-  }
-  
-  .swiper-slide {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-  }
-  
-  .swiper-slide img {
-    max-width: 100%;
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: cover;
-  }
-  
-  /* Stili per migliorare l'accessibilità dei controlli di navigazione */
-  .swiper-button-next,
-  .swiper-button-prev {
-    /* Dimensione standard Swiper ma più grande per accessibilità */
-    width: 44px;
-    height: 44px;
-    /* Sfondo per migliorare contrasto */
-    background-color: rgba(0, 0, 0, 0.8);
-    border-radius: 50%;
-    /* Transizione per feedback visivo */
-    transition: background-color 0.3s ease, transform 0.2s ease;
+  margin: 0 auto;
+  max-width: 800px;
+  position: relative;
+}
+
+/* Swiper mask container per un controllo preciso dell'overflow */
+.swiper-mask {
+  position: relative;
+  width: 100%;
+  overflow: hidden; /* Maschera principale che nasconde tutto ciò che è fuori */
+}
+
+/* Adds container mask effect */
+.carousel-multi-slide {
+  max-width: 1200px;
+  position: relative;
+}
+
+/* Basic Swiper overrides */
+:root {
+  --swiper-navigation-color: #fff;
+  --swiper-pagination-color: #007aff;
+  --swiper-outline-color: #007aff;
+}
+
+/* Slides */
+.swiper-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: opacity 0.3s ease;
+}
+
+.swiper-slide a{
+  text-decoration: none;
+}
+
+/* Swiper core */
+.swiper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Wrapper per le slide */
+.swiper-wrapper {
+  display: flex;
+  box-sizing: content-box;
+  transition-property: transform;
+}
+
+/* Fix per frecce di navigazione in Swiper */
+.swiper-button-next:after,
+.swiper-button-prev:after {
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+}
+
+.swiper-slide img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* Multi-slide specific */
+.carousel-multi-slide .swiper-slide img {
+  height: 120px;
+  width: 200px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.carousel-multi-slide .swiper-slide:hover img {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Navigation buttons */
+.swiper-button-next,
+.swiper-button-prev {
+  width: 44px;
+  height: 44px;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 2px solid rgba(255, 255, 255);
+  border-radius: 50%;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s, transform 0.2s;
+  margin: 0; /* Rimuove margini predefiniti */
+  position: absolute; /* Posizionamento assoluto */
+  top: 50%; /* Centrato verticalmente */
+  transform: translateY(-50%); /* Aggiustamento per centrare verticalmente */
+  z-index: 10; /* Sopra il contenuto */
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 18px; /* Dimensione icone */
+  font-weight: bold;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+  transform: translateY(-50%) scale(1.05);
+}
+
+/* Navigation buttons - Outside position */
+.nav-outside {
+  position: relative;
+  padding: 0 5rem; /* Container padding to make room for buttons */
+}
+
+.nav-outside .swiper-mask {
+  overflow: hidden; /* Assicura che la maschera funzioni anche con navigazione esterna */
+}
+
+.nav-outside .swiper-button-next {
+  right: 1rem; /* Posizionato all'interno del padding */
+}
+
+.nav-outside .swiper-button-prev {
+  left: 1rem; /* Posizionato all'interno del padding */
+}
+
+/* .nav-outside .swiper-button-next:hover {
+  transform: translateY(-50%) scale(1.05);
+} */
+
+/* .nav-outside .swiper-button-prev:hover {
+  transform: translateY(-50%) scale(1.05);
+} */
+
+/* .nav-outside .swiper-button-next:hover {
+  transform: scale(1.05);
+} */
+
+/* .nav-outside .swiper-button-prev:hover {
+  transform: scale(1.05);
+} */
+
+/* Pagination */
+.swiper-pagination-bullet {
+  width: 12px;
+  height: 12px;
+  opacity: 0.7;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+/* .swiper-pagination-bullet:hover {
+  transform: scale(1.2);
+}
+
+.swiper-pagination-bullet-active {
+  opacity: 1;
+  transform: scale(1.1);
+} */
+
+/* Accessibility focus */
+.swiper-button-next:focus,
+.swiper-button-prev:focus,
+.swiper-pagination-bullet:focus {
+  outline: 3px solid var(--swiper-outline-color);
+  outline-offset: 2px;
+}
+
+/* Captions */
+.slide-caption {
+  margin-top: 10px;
+  padding: 8px 16px;
+  font-size: 16px;
+  color: #333;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.carousel-multi-slide .slide-caption {
+  font-size: 16px;
+  font-weight: 700;
+  padding: 8px 10px;
+  margin-top: 8px;
+}
+
+/* Play/Pause button */
+.carousel-play-pause {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: none;
+  cursor: pointer;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+.carousel-play-pause:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.carousel-play-pause:focus {
+  outline: 3px solid var(--swiper-outline-color);
+  outline-offset: 2px;
+}
+
+/* Icons */
+.play-icon,
+.pause-icon {
+  color: white;
+  font-size: 18px;
+}
+
+.play-icon::after {
+  content: "▶";
+}
+
+.pause-icon::after {
+  content: "⏸";
+}
+
+/* Utility class for screen-reader only content */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Media queries */
+@media (prefers-reduced-motion: reduce) {
+  .swiper-wrapper {
+    transition: transform 0.5s ease !important;
   }
   
   .swiper-button-next:hover,
-  .swiper-button-prev:hover {
-    background-color: rgba(0, 0, 0, 0.9);
-    transform: scale(1.05);
-  }
-  
-  /* Regola di accessibilità per focus visibile */
-  .swiper-button-next:focus,
-  .swiper-button-prev:focus,
-  .swiper-pagination-bullet:focus {
-    outline: 3px solid var(--swiper-outline-color) !important;
-    outline-offset: 2px;
-  }
-  
-  /* Paginazione accessibile */
-  .swiper-pagination-bullet {
-    width: 12px;
-    height: 12px; 
-    opacity: 0.7;
-    /* Transizione per feedback */
-    transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
-  }
-  
+  .swiper-button-prev:hover,
   .swiper-pagination-bullet:hover {
-    transform: scale(1.2);
+    transform: none;
   }
-  
-  .swiper-pagination-bullet-active {
-    opacity: 1;
-    transform: scale(1.1);
-  }
-  
-  /* Didascalie */
-  .slide-caption {
-    margin-top: 10px;
-    padding: 8px 16px;
-    font-size: 16px;
-    color: #333;
-    width: 100%;
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.9);
-  }
-  
-  /* Pulsante play/pausa riposizionato correttamente */
-  .carousel-play-pause {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.8);
-    border: none;
-    cursor: pointer;
-    z-index: 20;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s;
-  }
-  
-  .carousel-play-pause:hover {
-    background-color: rgba(0, 0, 0, 0.9);
-  }
-  
-  .carousel-play-pause:focus {
-    outline: 3px solid var(--swiper-outline-color);
-    outline-offset: 2px;
-  }
-  
-  /* Icone Play e Pause con simboli HTML */
-  .play-icon,
-  .pause-icon {
-    color: white;
-    font-size: 18px;
-    line-height: 1;
-  }
-  
-  .play-icon::after {
-    content: "▶";
-  }
-  
-  .pause-icon::after {
-    content: "⏸";
-  }
-  
-  /* Helper per elementi visivamente nascosti ma accessibili agli screen reader */
-  .visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-  }
-  
-  /* Supporto per preferenze utente */
-  @media (prefers-reduced-motion: reduce) {
-    .swiper-wrapper {
-      transition: transform 0.5s ease !important;
-    }
-    
-    .swiper-button-next:hover,
-    .swiper-button-prev:hover,
-    .swiper-pagination-bullet:hover {
-      transform: none;
-    }
-  }
-  
-  /* Supporto per contrasto elevato */
-  @media (forced-colors: active) {
-    .swiper-button-next,
-    .swiper-button-prev {
-      border: 2px solid currentColor;
-      background-color: transparent;
-    }
-    
-    .swiper-pagination-bullet {
-      border: 1px solid currentColor;
-      background-color: transparent;
-    }
-    
-    .swiper-pagination-bullet-active {
-      background-color: currentColor;
-    }
-    
-    .carousel-play-pause {
-      border: 2px solid currentColor;
-    }
-  }
+}
 
-  /* Stili specifici per il carosello multi-slide */
+@media screen and (max-width: 1024px) {
   .carousel-multi-slide {
-    max-width: 1200px;
+    max-width: 90%;
   }
   
-  /* .carousel-multi-slide .swiper-slide {
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    opacity: 0.7;
-  } */
-  
-  .carousel-multi-slide .swiper-slide-active {
-    opacity: 1;
+  /* Adjust outside navigation buttons on smaller screens */
+  .nav-outside {
+    padding: 0 4rem;
   }
   
+  .nav-outside .swiper-button-next {
+    right: -2.5rem;
+  }
+  
+  .nav-outside .swiper-button-prev {
+    left: -2.5rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
   .carousel-multi-slide .swiper-slide img {
-    border-radius: 8px;
-    height: 280px; /* Altezza fissa per le immagini nel carosello multi-slide */
-    object-fit: cover;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease;
+    height: 120px;
+    width: 180px;
   }
   
-  .carousel-multi-slide .swiper-slide:hover img {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  /* Further adjust outside navigation buttons */
+  .nav-outside {
+    padding: 0 3.5rem;
+  }
+  
+  .nav-outside .swiper-button-next {
+    right: 0.5rem;
+  }
+  
+  .nav-outside .swiper-button-prev {
+    left: 0.5rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .carousel-multi-slide .swiper-slide img {
+    height: 100px;
+    width: 150px;
   }
   
   .carousel-multi-slide .slide-caption {
     font-size: 14px;
-    padding: 5px 10px;
-    margin-top: 5px;
   }
   
-  /* Gestione responsiva */
-  @media screen and (max-width: 1024px) {
-    .carousel-multi-slide {
-      max-width: 90%;
-    }
+  /* On very small screens, ensure buttons are still visible */
+  .nav-outside {
+    padding: 0 3rem;
   }
-  
-  @media screen and (max-width: 768px) {
-    .carousel-multi-slide .swiper-slide img {
-      height: 220px;
-    }
-  }
-  
-  @media screen and (max-width: 480px) {
-    .carousel-multi-slide .swiper-slide img {
-      height: 180px;
-    }
-    
-    .carousel-multi-slide .slide-caption {
-      font-size: 12px;
-    }
-  }
+}

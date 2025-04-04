@@ -1,163 +1,45 @@
 import { html } from 'lit';
-
 import './carousel.css';
 
-// Aggiungiamo gli stili direttamente nel componente
-// per evitare problemi di caricamento in Storybook
-const ensureSwiperStyles = () => {
-  if (typeof document !== 'undefined' && !document.getElementById('swiper-core-styles')) {
-    const styleEl = document.createElement('style');
-    styleEl.id = 'swiper-core-styles';
-    styleEl.textContent = `
-      /* Stili base di Swiper */
-      .swiper {
-        margin-left: auto;
-        margin-right: auto;
-        position: relative;
-        overflow: hidden;
-        list-style: none;
-        padding: 0;
-        z-index: 1;
-        width: 100%;
-        height: auto;
-      }
-      .swiper-wrapper {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-        display: flex;
-        transition-property: transform;
-        box-sizing: content-box;
-      }
-      .swiper-slide {
-        flex-shrink: 0;
-        width: 100%;
-        height: 100%;
-        position: relative;
-        transition-property: transform;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-      }
-      /* Frecce di navigazione */
-      .swiper-button-prev,
-      .swiper-button-next {
-        border: 2px solid #fff;
-        position: absolute;
-        top: 50%;
-        width: 44px;
-        height: 44px;
-        margin-top: -22px;
-        z-index: 10;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--swiper-navigation-color, #fff);
-        transition: opacity 0.3s ease;
-      }
-      .swiper-button-prev:after,
-      .swiper-button-next:after {
-        font-family: swiper-icons;
-        font-size: 24px;
-        font-weight: bold;
-        text-transform: none !important;
-        letter-spacing: 0;
-      }
-      .swiper-button-prev.swiper-button-disabled,
-      .swiper-button-next.swiper-button-disabled {
-        opacity: 0.35;
-        cursor: auto;
-        pointer-events: none;
-      }
-      .swiper-button-prev {
-        left: 10px;
-        right: auto;
-      }
-      .swiper-button-prev:after {
-        content: 'prev';
-      }
-      .swiper-button-next {
-        right: 10px;
-        left: auto;
-      }
-      .swiper-button-next:after {
-        content: 'next';
-      }
-      
-      /* Paginazione */
-      .swiper-pagination {
-        position: absolute;
-        text-align: center;
-        transition: 300ms opacity;
-        transform: translate3d(0, 0, 0);
-        z-index: 10;
-        bottom: 10px;
-        left: 0;
-        width: 100%;
-      }
-      .swiper-pagination-bullets {
-        bottom: 10px;
-      }
-      .swiper-pagination-bullet {
-        width: 12px;
-        height: 12px;
-        display: inline-block;
-        border-radius: 50%;
-        background: var(--swiper-pagination-color, #000);
-        opacity: 0.2;
-        margin: 0 4px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-      .swiper-pagination-bullet:hover {
-        opacity: 0.5;
-      }
-      .swiper-pagination-bullet:focus {
-        outline: 2px solid var(--swiper-outline-color, #000);
-        outline-offset: 2px;
-      }
-      .swiper-pagination-bullet-active {
-        opacity: 1;
-        background: var(--swiper-pagination-color, #007aff);
-      }
+let Swiper: any;
+let SwiperModules: any;
 
-      /* Regole di accessibilità specifiche */
-      .swiper-button-prev:focus,
-      .swiper-button-next:focus {
-        outline: 2px solid var(--swiper-navigation-color, #007aff);
-        outline-offset: 2px;
-      }
+export interface CarouselTexts {
+  imageGallery: string;
+  previousSlide: string;
+  nextSlide: string;
+  currentSlide: string;
+  slide: string;
+  startCarousel: string;
+  pauseCarousel: string;
+  navigationInstructions: string;
+  goToSlide: string;
+  firstSlide: string;
+  lastSlide: string;
+}
 
-      @font-face {
-        font-family: 'swiper-icons';
-        src: url('data:application/font-woff;charset=utf-8;base64, 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');
-        font-weight: 400;
-        font-style: normal;
-      }
-    `;
-    document.head.appendChild(styleEl);
-  }
+export const defaultTexts: CarouselTexts = {
+  imageGallery: 'Galleria di immagini',
+  previousSlide: 'Slide precedente',
+  nextSlide: 'Slide successiva',
+  currentSlide: 'Slide corrente',
+  slide: 'Slide',
+  startCarousel: 'Avvia il carosello',
+  pauseCarousel: 'Metti in pausa il carosello',
+  navigationInstructions: 'Usa le frecce sinistra e destra per navigare tra le slide',
+  goToSlide: 'Vai alla slide',
+  firstSlide: 'Questa è la prima slide',
+  lastSlide: 'Questa è l\'ultima slide'
 };
 
-// Definisce gli URL immagini di placeholder di default
-const DEFAULT_IMAGES = [
-  'https://via.placeholder.com/800x400/3498db/ffffff?text=Slide+1',
-  'https://via.placeholder.com/800x400/e74c3c/ffffff?text=Slide+2',
-  'https://via.placeholder.com/800x400/2ecc71/ffffff?text=Slide+3',
-  'https://via.placeholder.com/800x400/f39c12/ffffff?text=Slide+4',
-  'https://via.placeholder.com/800x400/9b59b6/ffffff?text=Slide+5',
-  'https://via.placeholder.com/800x400/34495e/ffffff?text=Slide+6',
-  'https://via.placeholder.com/800x400/1abc9c/ffffff?text=Slide+7'
-];
+export enum NavigationButtonPosition {
+  OVERLAY = 'overlay',
+  OUTSIDE = 'outside'
+}
 
 export interface CarouselProps {
   slides?: Array<{
     image: string;
-    alt?: string;
-    title?: string;
     caption?: string;
   }>;
   autoplay?: boolean;
@@ -169,6 +51,7 @@ export interface CarouselProps {
   centeredSlides?: boolean;
   showPagination?: boolean;
   showCaptions?: boolean;
+  navigationButtonPosition?: NavigationButtonPosition;
   breakpoints?: {
     [width: number]: {
       slidesPerView?: number;
@@ -176,414 +59,88 @@ export interface CarouselProps {
     };
   };
   onSlideChange?: (index: number) => void;
+  texts?: Partial<CarouselTexts>;
 }
 
-// Ottiene le slide, usando quelle di default se non specificate
-const getSlides = (props: CarouselProps) => {
-  if (props.slides && props.slides.length > 0) {
-    return props.slides;
-  }
-  
-  // Crea slide di default se non specificate
-  return DEFAULT_IMAGES.map((image, index) => ({
-    image,
-    alt: `Slide ${index + 1}`,
-    title: `Slide ${index + 1}`,
-    caption: `Didascalia per la slide ${index + 1}`
-  }));
-};
+const DEFAULT_IMAGES = [
+  'https://via.placeholder.com/800x400/3498db/ffffff?text=Slide+1',
+  'https://via.placeholder.com/800x400/e74c3c/ffffff?text=Slide+2',
+  'https://via.placeholder.com/800x400/2ecc71/ffffff?text=Slide+3',
+  'https://via.placeholder.com/800x400/f39c12/ffffff?text=Slide+4'
+];
 
-// Variabili
-let swiperInstances = new Map();
-let liveRegion: HTMLElement | null = null;
+const swiperInstances = new Map();
 
-const destroySwiper = (containerId: string) => {
-  if (swiperInstances.has(containerId)) {
-    const swiper = swiperInstances.get(containerId);
-    if (swiper) {
-      swiper.destroy(true, true);
-      swiperInstances.delete(containerId);
-    }
-  }
-};
-
-const initSwiper = (container: Element, props: CarouselProps, containerId: string) => {
-  // Distruggi l'istanza precedente se esiste
-  destroySwiper(containerId);
-  
-  // Carica dinamicamente Swiper
-  Promise.all([
-    import('swiper'),
-    import('swiper/modules')
-  ]).then(([{ Swiper }, { Navigation, Pagination, A11y, Autoplay }]) => {
-    if (!container) return;
-    
-    // Registra i moduli necessari
-    Swiper.use([Navigation, Pagination, A11y, Autoplay]);
-    
-    // Configurazione del numero di slide da visualizzare
-    const slidesPerView = props.multiSlide ? (props.slidesPerView || 5) : 1;
-    const spaceBetween = props.multiSlide ? (props.spaceBetween || 20) : 30;
-    const centeredSlides = props.multiSlide ? (props.centeredSlides !== undefined ? props.centeredSlides : false) : false;
-    
-    // Inizializza una nuova istanza di Swiper
-    const swiper = new Swiper(container as HTMLElement, {
-      slidesPerView: slidesPerView,
-      spaceBetween: spaceBetween,
-      centeredSlides: centeredSlides,
-      loop: props.loop,
-      autoplay: props.autoplay ? {
-        delay: props.delay || 5000,
-        disableOnInteraction: false,
-        // Non mettere in pausa su hover
-        pauseOnMouseEnter: false
-      } : false,
-      
-      // Breakpoint responsivi per la versione multi-slide
-      breakpoints: props.multiSlide ? (props.breakpoints || {
-        320: {
-          slidesPerView: 1,
-          spaceBetween: 10
-        },
-        480: {
-          slidesPerView: 2,
-          spaceBetween: 15
-        },
-        768: {
-          slidesPerView: 3,
-          spaceBetween: 15
-        },
-        1024: {
-          slidesPerView: slidesPerView,
-          spaceBetween: spaceBetween
-        }
-      }) : undefined,
-      
-      // Impostazioni di navigazione accessibili
-      navigation: {
-        nextEl: `#${containerId} .swiper-button-next`,
-        prevEl: `#${containerId} .swiper-button-prev`,
-      },
-      
-      pagination: props.showPagination !== false ? {
-        el: `#${containerId} .swiper-pagination`,
-        clickable: true,
-        bulletElement: 'button',
-        renderBullet: function (index: number, className: string) {
-          return `<button class="${className}" aria-label="Vai alla slide ${index + 1}"></button>`;
-        }
-      } : false,
-      
-      // Miglioramenti per l'accessibilità
-      a11y: {
-        enabled: true,
-        prevSlideMessage: 'Slide precedente',
-        nextSlideMessage: 'Slide successiva',
-        firstSlideMessage: 'Questa è la prima slide',
-        lastSlideMessage: 'Questa è l\'ultima slide',
-        paginationBulletMessage: 'Vai alla slide {{index}}',
-        containerMessage: 'Carosello di immagini',
-        containerRoleDescriptionMessage: 'Carosello',
-        itemRoleDescriptionMessage: 'Slide'
-      },
-      
-      // Velocità di transizione ridotta per una migliore accessibilità
-      speed: 300,
-      
-      // Per migliorare l'accessibilità, disabilitiamo temporaneamente gli effetti 
-      // di transizione quando viene utilizzata la navigazione da tastiera
-      keyboard: {
-        enabled: true,
-        onlyInViewport: true,
-      },
-      
-      // Gestisci gli eventi
-      on: {
-        slideChange: function() {
-          // Utilizziamo l'istanza swiper locale
-          const currentSwiper = this;
-          // Utilizziamo tipizzazione sicura per TypeScript
-          const swiperInstance = currentSwiper as any;
-          const currentSlide = swiperInstance.realIndex !== undefined 
-            ? swiperInstance.realIndex 
-            : swiperInstance.activeIndex || 0;
-          
-          // Aggiorna la regione live per utenti screen reader
-          const slides = getSlides(props);
-          const slide = slides[currentSlide];
-          if (slide && liveRegion) {
-            liveRegion.textContent = `Slide corrente: ${slide.title || `Slide ${currentSlide + 1}`}`;
-          }
-          
-          // Aggiorna gli attributi tabindex per la navigazione da tastiera
-          updateTabIndex(containerId, currentSlide);
-          
-          // Chiama il callback se definito
-          if (props.onSlideChange) {
-            props.onSlideChange(currentSlide);
-          }
-        },
-        // Utilizziamo questo evento per gestire meglio il focus
-        slideChangeTransitionEnd: function() {
-          // Dopo che la transizione è completa, facciamo focus sulla slide attiva
-          // per migliorare l'esperienza con screen reader
-          const activeSlide = document.querySelector(`#${containerId} .swiper-slide-active`);
-          if (activeSlide) {
-            // Non spostiamo il focus per evitare confusione, ma assicuriamoci che sia navigabile
-            activeSlide.setAttribute('tabindex', '0');
-          }
-        }
-      }
-    });
-    
-    // Salva l'istanza di Swiper nella mappa
-    swiperInstances.set(containerId, swiper);
-    
-    // Aggiungi controlli da tastiera personalizzati
-    setupKeyboardControls(props, containerId);
-    
-    // Inizializza correttamente lo stato di tabindex
-    updateTabIndex(containerId, 0);
-    
-    // Aggiungi event listener per il pulsante play/pause
-    const playPauseButton = document.querySelector(`#${containerId} .carousel-play-pause`);
-    if (playPauseButton) {
-      playPauseButton.addEventListener('click', () => {
-        toggleAutoplay(props, playPauseButton as HTMLElement, containerId);
-      });
-    }
-    
-    // Debug info
-    console.log(`Carosello ${containerId} inizializzato con:`, {
-      slides: props.slides?.length,
-      autoplay: props.autoplay,
-      loop: props.loop,
-      multiSlide: props.multiSlide,
-      slidesPerView: props.slidesPerView,
-      showPagination: props.showPagination,
-      showCaptions: props.showCaptions
-    });
-  }).catch(error => {
-    console.error(`Errore durante l'inizializzazione di Swiper per ${containerId}:`, error);
-  });
-};
-
-// Aggiunge funzione per aggiornare gli attributi tabindex
-const updateTabIndex = (containerId: string, currentSlideIndex: number) => {
-  // Otteniamo tutte le slide
-  const slides = document.querySelectorAll(`#${containerId} .swiper-slide`);
-  
-  slides.forEach((slide, index) => {
-    // Impostiamo tabindex=0 solo sulla slide attiva, -1 sulle altre
-    if (index === currentSlideIndex) {
-      slide.setAttribute('tabindex', '0');
-    } else {
-      slide.setAttribute('tabindex', '-1');
-    }
-  });
-};
-
-// Miglioriamo i controlli da tastiera per risolvere il problema delle slide bloccate a metà
-const setupKeyboardControls = (props: CarouselProps, containerId: string) => {
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (!document.activeElement?.closest(`#${containerId}`)) return;
-    
-    const isNavigationKey = ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key);
-    
-    // Se stiamo usando tasti di navigazione, assicuriamoci che le transizioni siano immediate
-    if (isNavigationKey && swiperInstances.has(containerId)) {
-      const swiper = swiperInstances.get(containerId);
-      if (!swiper) return;
-      
-      // Salva lo stato attuale della velocità di transizione
-      const originalSpeed = swiper.params.speed;
-      
-      // Imposta la velocità a 0 temporaneamente per una transizione immediata
-      swiper.params.speed = 0;
-      
-      switch(event.key) {
-        case 'ArrowLeft':
-          swiper.slidePrev();
-          break;
-        case 'ArrowRight':
-          swiper.slideNext();
-          break;
-        case 'Home':
-          swiper.slideTo(0);
-          break;
-        case 'End':
-          swiper.slideTo(getSlides(props).length - 1);
-          break;
-      }
-      
-      // Aggiorna immediatamente gli attributi tabindex
-      const swiperAny = swiper as any;
-      updateTabIndex(containerId, swiperAny.realIndex !== undefined ? swiperAny.realIndex : swiperAny.activeIndex || 0);
-      
-      // Ripristina la velocità originale dopo un breve delay
-      setTimeout(() => {
-        if (swiper) {
-          swiper.params.speed = originalSpeed;
-        }
-      }, 50);
-      
-      event.preventDefault();
-    }
-  };
-
-  // Rimuovi listener precedenti per evitare duplicati
-  document.removeEventListener('keydown', handleKeyDown);
-  document.addEventListener('keydown', handleKeyDown);
-};
-
-const addA11yAnnouncer = (container: Element) => {
-  // Crea un elemento per annunci ARIA live
-  if (liveRegion) {
-    try {
-      container.removeChild(liveRegion);
-    } catch (e) {
-      // In caso l'elemento non sia un figlio di questo container
-    }
-  }
-  
-  liveRegion = document.createElement('div');
-  liveRegion.setAttribute('aria-live', 'polite');
-  liveRegion.setAttribute('aria-atomic', 'true');
-  liveRegion.classList.add('visually-hidden');
-  liveRegion.id = 'carousel-announcer';
-  container.appendChild(liveRegion);
-};
-
-const toggleAutoplay = (props: CarouselProps, buttonElement: HTMLButtonElement | HTMLElement, containerId: string) => {
-  if (!swiperInstances.has(containerId)) return;
-  
-  const swiper = swiperInstances.get(containerId);
-  if (!swiper || !swiper.autoplay) return;
-  
-  // Ottieni lo stato corrente
-  const isRunning = swiper.autoplay.running;
-
-  // Ottieni l'elemento icon
-  const icon = buttonElement.querySelector('span');
-  
-  if (isRunning) {
-    // Se è in esecuzione, fermalo
-    swiper.autoplay.stop();
-    
-    // Aggiorna l'icona e il pulsante
-    if (icon) {
-      icon.className = 'play-icon';
-    }
-    
-    buttonElement.setAttribute('aria-pressed', 'false');
-    buttonElement.setAttribute('aria-label', 'Avvia il carosello');
-    
-    console.log(`Autoplay fermato per ${containerId}`);
-  } else {
-    // Se è fermo, avvialo
-    swiper.autoplay.start();
-    
-    // Aggiorna l'icona e il pulsante
-    if (icon) {
-      icon.className = 'pause-icon';
-    }
-    
-    buttonElement.setAttribute('aria-pressed', 'true');
-    buttonElement.setAttribute('aria-label', 'Metti in pausa il carosello');
-    
-    console.log(`Autoplay avviato per ${containerId}`);
-  }
-};
-
-// Componente principale
 export const carousel = (props: CarouselProps) => {
-  // Genera un ID univoco per questo carosello
+
   const carouselId = `carousel-${Math.floor(Math.random() * 10000)}`;
   
+  const texts = { ...defaultTexts, ...(props.texts || {}) };
+  
   const mergedProps = {
-    ...props,
-    slides: getSlides(props),
+    slides: props.slides || DEFAULT_IMAGES.map((image, i) => ({
+      image,
+      alt: `${texts.slide} ${i + 1}`,
+      caption: `${texts.slide} ${i + 1}`
+    })),
     autoplay: props.autoplay || false,
     loop: props.loop !== undefined ? props.loop : true,
     delay: props.delay || 5000,
     multiSlide: props.multiSlide || false,
-    slidesPerView: props.slidesPerView || 5,
+    slidesPerView: props.slidesPerView || (props.multiSlide ? 3 : 1),
     spaceBetween: props.spaceBetween || 20,
     centeredSlides: props.centeredSlides || false,
     showPagination: props.showPagination !== undefined ? props.showPagination : true,
-    showCaptions: props.showCaptions !== undefined ? props.showCaptions : true
+    showCaptions: props.showCaptions !== undefined ? props.showCaptions : true,
+    navigationButtonPosition: props.navigationButtonPosition || NavigationButtonPosition.OVERLAY,
+    texts
   };
+
+  setTimeout(() => initCarousel(carouselId, mergedProps), 0);
   
-  // Assicuriamoci che gli stili di Swiper siano caricati
-  ensureSwiperStyles();
-  
-  // Setup del carosello dopo il rendering
-  setTimeout(() => {
-    const container = document.getElementById(carouselId);
-    const swiperContainer = container?.querySelector('.swiper');
-    
-    if (container && swiperContainer) {
-      addA11yAnnouncer(container);
-      initSwiper(swiperContainer, mergedProps, carouselId);
-    }
-  }, 0);
-  
-  // Gestisci la pulizia quando l'elemento viene rimosso
   if (typeof window !== 'undefined') {
-    const cleanup = () => {
-      destroySwiper(carouselId);
-    };
-    
-    // Rimuovi eventuali listener precedenti
+    const cleanup = () => destroySwiper(carouselId);
     window.removeEventListener('beforeunload', cleanup);
     window.addEventListener('beforeunload', cleanup);
   }
   
-  // Renderizza l'HTML del carosello
   return html`
-    <div id="${carouselId}" class="carousel-container ${mergedProps.multiSlide ? 'carousel-multi-slide' : ''}">
-      <!-- Titolo accessibile del carosello -->
-      <h2 id="carousel-title-${carouselId}" class="visually-hidden">Galleria di immagini</h2>
+    <div id="${carouselId}" class="carousel-container ${mergedProps.multiSlide ? 'carousel-multi-slide' : ''} nav-${mergedProps.navigationButtonPosition}">
+      <h2 id="carousel-title-${carouselId}" class="visually-hidden">${mergedProps.texts.imageGallery}</h2>
       
-      <!-- Istruzioni di accessibilità per screen reader -->
-      <div class="visually-hidden" aria-live="polite">
-        Utilizzare i tasti freccia sinistra e destra per navigare tra le slide. 
-        Premere Home per andare alla prima slide, End per l'ultima.
-      </div>
-      
-      <!-- Swiper container -->
-      <div 
-        class="swiper" 
-        role="region"
-        aria-roledescription="carosello" 
-        aria-labelledby="carousel-title-${carouselId}"
-      >
-        <!-- Pulsante Play/Pausa riposizionato con icone Unicode chiare -->
+      <div class="swiper-mask">
+        <div class="swiper" role="region" aria-roledescription="carousel" aria-labelledby="carousel-title-${carouselId}">
+        <!-- Play/Pause button -->
         <button 
           class="carousel-play-pause" 
           type="button"
-          aria-label="${mergedProps.autoplay ? 'Metti in pausa il carosello' : 'Avvia il carosello'}"
+          aria-label="${mergedProps.autoplay ? mergedProps.texts.pauseCarousel : mergedProps.texts.startCarousel}"
           aria-pressed="${mergedProps.autoplay ? 'true' : 'false'}"
         >
           <span class="${mergedProps.autoplay ? 'pause-icon' : 'play-icon'}"></span>
         </button>
         
+        <!-- Accessibility instructions -->
+        <div class="visually-hidden" aria-live="polite">
+          ${mergedProps.texts.navigationInstructions}
+        </div>
+        
+        <!-- Slides -->
         <div class="swiper-wrapper">
           ${mergedProps.slides.map((slide, index) => html`
             <div 
               class="swiper-slide" 
               role="group" 
               aria-roledescription="slide"
-              aria-label="${slide.title || `Slide ${index + 1}`}"
+              aria-label="${slide.caption}"
               tabindex="${index === 0 ? '0' : '-1'}"
               aria-hidden="${index === 0 ? 'false' : 'true'}"
+              ${index === 0 ? 'aria-current="true"' : ''}
             >
               <img 
                 src="${slide.image}" 
-                alt="${slide.alt || ''}" 
+                alt="" 
                 loading="lazy"
-                width="800"
-                height="400"
               />
               ${slide.caption && mergedProps.showCaptions ? html`
                 <div class="slide-caption">${slide.caption}</div>
@@ -592,14 +149,291 @@ export const carousel = (props: CarouselProps) => {
           `)}
         </div>
         
-        <!-- Controlli di navigazione -->
-        <div class="swiper-button-prev" role="button" aria-label="Slide precedente" tabindex="0"></div>
-        <div class="swiper-button-next" role="button" aria-label="Slide successiva" tabindex="0"></div>
+        <!-- Navigation -->
+        <div class="swiper-button-prev" role="button" aria-label="${mergedProps.texts.previousSlide}"></div>
+        <div class="swiper-button-next" role="button" aria-label="${mergedProps.texts.nextSlide}"></div>
         
-        <!-- Paginazione (condizionale) -->
+        <!-- Pagination -->
         ${mergedProps.showPagination ? html`
-        <div class="swiper-pagination" role="group" aria-label="Selezione slide"></div>
+          <div class="swiper-pagination"></div>
         ` : ''}
       </div>
     </div>
-  `;};
+    <div class="carousel-live-region visually-hidden" role="alert"></div>
+  `;
+};
+
+async function initCarousel(carouselId: string, props: CarouselProps) {
+  const container = document.getElementById(carouselId);
+  const swiperContainer = container?.querySelector('.swiper');
+  
+  if (!container || !swiperContainer) return;
+  
+  (container as any).carouselTexts = props.texts || defaultTexts;
+
+  destroySwiper(carouselId);
+  
+  if (!Swiper) {
+    const imports = await Promise.all([
+      import('swiper'),
+      import('swiper/modules')
+    ]);
+    
+    Swiper = imports[0].Swiper;
+    SwiperModules = imports[1];
+    
+    if (!document.getElementById('swiper-core-styles')) {
+      const styleEl = document.createElement('link');
+      styleEl.id = 'swiper-core-styles';
+      styleEl.rel = 'stylesheet';
+      styleEl.href = 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css';
+      document.head.appendChild(styleEl);
+    }
+  }
+  
+  try {
+
+    const { Navigation, Pagination, A11y, Autoplay } = SwiperModules;
+    Swiper.use([Navigation, Pagination, A11y, Autoplay]);
+    
+    const slidesPerGroup = 1; 
+
+    const swiper = new Swiper(swiperContainer, {
+      slidesPerView: props.slidesPerView,
+      slidesPerGroup: slidesPerGroup,
+      spaceBetween: props.spaceBetween,
+      centeredSlides: props.centeredSlides,
+      loop: props.loop,
+      autoplay: props.autoplay ? {
+        delay: props.delay,
+        disableOnInteraction: false
+      } : false,
+      loopedSlides: props.loop ? Math.max(3, props.slidesPerView || 1) : 0,
+      loopFillGroupWithBlank: props.multiSlide,
+      watchSlidesProgress: true, 
+      slideVisibleClass: 'swiper-slide-visible',
+      preventInteractionOnTransition: true, 
+      cssMode: false,
+      breakpoints: props.multiSlide ? (props.breakpoints || {
+        320: { slidesPerView: 1, spaceBetween: 10 },
+        480: { slidesPerView: 2, spaceBetween: 15 },
+        768: { slidesPerView: 3, spaceBetween: 20 },
+        1024: { slidesPerView: props.slidesPerView, spaceBetween: props.spaceBetween }
+      }) : undefined,
+      
+      navigation: {
+        nextEl: `#${carouselId} .swiper-button-next`,
+        prevEl: `#${carouselId} .swiper-button-prev`,
+      },
+      
+      pagination: props.showPagination ? {
+        el: `#${carouselId} .swiper-pagination`,
+        clickable: true,
+        renderBullet: function (index: number, className: string) {
+          const texts = props.texts || defaultTexts;
+          return `<button class="${className}" aria-label="${texts.goToSlide} ${index + 1}"></button>`;
+        }
+      } : false,
+      
+      a11y: {
+        enabled: true,
+        prevSlideMessage: (props.texts || defaultTexts).previousSlide,
+        nextSlideMessage: (props.texts || defaultTexts).nextSlide
+      },
+      
+      on: {
+
+        init: function() {
+          const swiperInstance = this as any;
+          const currentSlide = swiperInstance.realIndex ?? swiperInstance.activeIndex ?? 0;
+          
+          updateAriaAttributes(carouselId, currentSlide);
+          
+          const container = document.getElementById(carouselId);
+          if (container) {
+            const liveRegion = container.querySelector('.carousel-live-region');
+            if (liveRegion) {
+              const totalSlides = props.slides?.length || 0;
+              liveRegion.setAttribute('data-position', `1 / ${totalSlides}`);
+            }
+          }
+        },
+        
+        slideChange: function() {
+          const swiperInstance = this as any;
+          
+          let currentSlide;
+          
+          if (props.loop) {
+            currentSlide = swiperInstance.realIndex !== undefined ? 
+              swiperInstance.realIndex : 
+              ((swiperInstance.activeIndex - swiperInstance.loopedSlides) % 
+                (swiperInstance.slides.length - swiperInstance.loopedSlides * 2));
+            
+            if (currentSlide < 0) {
+              currentSlide += (swiperInstance.slides.length - swiperInstance.loopedSlides * 2);
+            }
+          } else {
+            currentSlide = swiperInstance.activeIndex || 0;
+          }
+          
+          updateAriaAttributes(carouselId, currentSlide);
+          
+          const container = document.getElementById(carouselId);
+          if (container) {
+            announceSlideChange(container, props.slides?.[currentSlide]);
+          }
+          
+          if (props.onSlideChange) {
+            props.onSlideChange(currentSlide);
+          }
+        }
+      }
+    });
+    
+    swiperInstances.set(carouselId, swiper);
+    
+    setupKeyboardControls(carouselId, props);
+    
+    setupPlayPauseButton(carouselId);
+    
+  } catch (error) {
+    console.error(`Error initializing carousel ${carouselId}:`, error);
+  }
+}
+
+// Destroy Swiper instance
+function destroySwiper(carouselId: string) {
+  if (swiperInstances.has(carouselId)) {
+    const swiper = swiperInstances.get(carouselId);
+    if (swiper) {
+      swiper.destroy(true, true);
+      swiperInstances.delete(carouselId);
+    }
+  }
+}
+
+// Update ARIA attributes for current slide 
+function updateAriaAttributes(carouselId: string, currentSlide: number) {
+  const container = document.getElementById(carouselId);
+  if (!container) return;
+  
+  const slides = container.querySelectorAll('.swiper-slide');
+  const totalSlides = slides.length;
+  
+  slides.forEach((slide, index) => {
+   
+    const isCurrent = index === currentSlide;
+    
+    slide.setAttribute('tabindex', isCurrent ? '0' : '-1');
+    
+    slide.setAttribute('aria-hidden', isCurrent ? 'false' : 'true');
+    
+    if (isCurrent) {
+      slide.setAttribute('aria-current', 'true');
+    } else {
+      slide.removeAttribute('aria-current');
+    }
+  });
+  
+  const liveRegion = container.querySelector('.carousel-live-region');
+  if (liveRegion) {
+    const positionInfo = `${currentSlide + 1} / ${totalSlides}`;
+    liveRegion.setAttribute('data-position', positionInfo);
+  }
+}
+
+// Enhanced slide change announcement
+function announceSlideChange(container: Element, slide?: { caption?: string }) {
+  const liveRegion = container.querySelector('.carousel-live-region');
+  if (!liveRegion || !slide) return;
+
+  const positionInfo = liveRegion.getAttribute('data-position') || '';
+  
+  liveRegion.textContent = '';
+  liveRegion.textContent = `${slide.caption} - ${positionInfo}`;
+  
+}
+
+// Setup keyboard controls - Updated function
+function setupKeyboardControls(carouselId: string, props: CarouselProps) {
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (!document.activeElement?.closest(`#${carouselId}`)) return;
+    
+    const swiper = swiperInstances.get(carouselId);
+    if (!swiper) return;
+    
+    const now = Date.now();
+    
+    if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
+      event.preventDefault();
+      
+      if (event.key === 'ArrowLeft') {
+        const prevButton = document.querySelector(`#${carouselId} .swiper-button-prev`);
+        if (prevButton) {
+          (prevButton as HTMLElement).click();
+        }
+      } else if (event.key === 'ArrowRight') {
+        const nextButton = document.querySelector(`#${carouselId} .swiper-button-next`);
+        if (nextButton) {
+          (nextButton as HTMLElement).click();
+        }
+      } else if (event.key === 'Home') {
+        swiper.slideTo(0);
+      } else if (event.key === 'End') {
+        const lastSlideIndex = props.slides ? props.slides.length - 1 : swiper.slides.length - 1;
+        swiper.slideTo(lastSlideIndex);
+      }
+      
+      let currentIndex = swiper.realIndex;
+      if (currentIndex === undefined) {
+        if (swiper.params.loop) {
+          currentIndex = (swiper.activeIndex - swiper.loopedSlides) % (swiper.slides.length - swiper.loopedSlides * 2);
+          if (currentIndex < 0) currentIndex += (swiper.slides.length - swiper.loopedSlides * 2);
+        } else {
+          currentIndex = swiper.activeIndex;
+        }
+      }
+      
+      updateAriaAttributes(carouselId, currentIndex);
+      
+      const container = document.getElementById(carouselId);
+      if (container && props.slides && props.slides[currentIndex]) {
+        announceSlideChange(container, props.slides?.[currentIndex]);
+      }
+    }
+  };
+
+  document.removeEventListener('keydown', handleKeyDown);
+  document.addEventListener('keydown', handleKeyDown);
+}
+
+// Setup play/pause button
+function setupPlayPauseButton(carouselId: string) {
+  const container = document.getElementById(carouselId);
+  const button = container?.querySelector('.carousel-play-pause');
+  if (!button || !container) return;
+  
+  const texts = (container as any).carouselTexts || defaultTexts;
+  
+  button.addEventListener('click', () => {
+    const swiper = swiperInstances.get(carouselId);
+    if (!swiper || !swiper.autoplay) return;
+    
+    const isRunning = swiper.autoplay.running;
+    const icon = button.querySelector('span');
+    
+    if (isRunning) {
+      swiper.autoplay.stop();
+      icon?.classList.replace('pause-icon', 'play-icon');
+      button.setAttribute('aria-pressed', 'false');
+      button.setAttribute('aria-label', texts.startCarousel);
+    } else {
+      swiper.autoplay.start();
+      icon?.classList.replace('play-icon', 'pause-icon');
+      button.setAttribute('aria-pressed', 'true');
+      button.setAttribute('aria-label', texts.pauseCarousel);
+    }
+  });
+}
