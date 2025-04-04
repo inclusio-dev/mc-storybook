@@ -1,18 +1,133 @@
 import { Meta } from "@storybook/blocks";
 
-<Meta title="Configurazioni generali" />
+<Meta title="Organizzazione dei componenti" />
 
 <div>
-  <h1>Configurazioni generali</h1>
-  <p>Le configurazioni generali sono le impostazioni che riguardano l'intero progetto.</p>
+  <h1>Organizzazione dei componenti</h1>
+  
+  ✅ = fatto
+  ⏱️ = work in progress
+  ⚠️ = fuori dal perimetro
+
+  <ul>
+    <li>
+      Icon ✅ (props: type, size) (vedi dettaglio funzionamento script icone)
+    </li>
+    <li>
+      Button ✅ (props: iconLeft, iconRight, iconSize, width, height, variant, type, disabled, label, onClick)
+      <ul>
+        <li>PrimarioSolido</li>
+        <li>PrimarioContorno</li>
+        <li>SecondarioSolido</li>
+        <li>SecondarioContorno</li>
+        <li>TerziarioSolido</li>
+        <li>TerziarioContorno</li>
+        <li>DolcecasaSolido</li>
+        <li>DolcecasaneroSolido</li>
+        <li>PrimarioSolidoDisabilitato</li>
+        <li>CarrelloDesktop</li>
+        <li>CarrelloMobile</li>
+        <li>SecondarioSolidoMenu</li>
+        <li>Findomestic</li>
+        <li>ProcediAcquisto</li>
+      </ul>
+    </li>
+    <li>
+      Link ⏱️ (props: variant, iconName, hoverEffect)
+      <ul>
+        <li>Header</li>
+        <li>Tag</li>
+        <li>InlineWithArrow</li>
+      </ul>
+    </li>
+    <li>
+      Input ⚠️ -> ⏱️
+    </li>
+    <li>
+      Tab ✅ (props: tabs, activeTab, variant, container)
+      <ul>
+        <li>Default</li>
+        <li>Pieno</li>
+      </ul>
+    </li>
+    <li>
+      ButtonGroup ⏱️ = InputRadioGroup (props: radios, acriveRadio, variant)
+    </li>
+    <li>
+      Accordion ✅ (props: label, open, content, customIcon, onToggle )
+      <ul>
+        <li>Default (con o senza icona a sinistra)</li>
+        <li>Listati</li>
+      </ul>
+      </li>
+    <li>
+      Card e elementi prodotto ⏱️
+      <ul>
+        <li>Default</li>
+        <li>Listati</li>
+      </ul>
+    </li>
+    <li>
+      CardConfiguratore ⚠️
+    </li>
+    <li>
+      Header ⏱️ (con megamenu, variante postLogin)
+    </li>
+    <li>
+      HeaderAreaUtente ⚠️
+    </li>
+    <li>
+      Menu = MenuAreaUtente ⚠️
+    </li>
+    <li>
+      Footer ⚠️
+    </li>
+    <li>
+      BannerNewsletter ⚠️
+    </li>
+    <li>
+      Modale (props: centered, alignRight) ⏱️
+      <ul>
+        <li>
+          Default (centerd=true)
+        </li>
+        <li>
+          Overlay = AlignRight (alignRight=true)
+        </li>
+      </ul>
+    </li>
+    <li>
+      Popup = DropdownContent ⏱️
+      <ul>
+        <li>
+          Anteprima Carrello = Contenuto Dropdown iconLabelCart 
+        </li>
+        <li>
+          Menu = Contenuto Drodpown onlyLabel
+        </li>
+        <li>
+          Tooltip non è accessibile avere un tooltip del genere !
+        </li>
+        <li>
+          Risultati Ricerca =  (sarebbe contenitore dropdown con bordo ma senza triangolo)
+        </li>
+      </ul>
+    </li>
+    <li>
+      PopupAreaUtente ⚠️
+    </li>
+    <li>
+      Carosello ⏱️ (props: slides, autoplay, loop, delay, multiSlide, slidesPerView, spaceBetween, centeredSlides, showPagination, showCaptions, breakpoints, onSlideChange) 
+      <ul>
+        <li>SingoloElementoFull = Default (autoplay = true, loop = true, multiSlide = false, slidePerView = 1, showPagination = true, externalArrow = false)</li>
+        <li>MultiElemento = FiveSlides (multiSlide = true, slidePerView = 5, showPagination = false, showCaptions = true, externalArrow = true)</li>
+      </ul>
+    </li>
+    <li>
+      CaroselloHero (props: ) ⏱️
+    </li>
+    <li>
+      DettaglioProdotto
+    </li>
+  </ul>
 </div>
-
-<style>
-  {`
-    @import '/index.css';
-
-    div{
-      font-family: var(--font-family);
-    }
-  `}
-</style>
