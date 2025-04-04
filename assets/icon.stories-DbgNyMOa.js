@@ -6,15 +6,15 @@ import{x as p}from"./lit-element-D_Wi02Oa.js";import{i}from"./icon-B2F652rT.js";
   <div style="display: flex; align-items: center; gap: 20px; padding: 20px;">
     <div>
       <p>Small</p>
-      ${i({type:"property_1_cross_selling",size:"small"})}
+      ${i({type:"property_1_cross_selling_2",size:"small"})}
     </div>
     <div>
       <p>Medium</p>
-      ${i({type:"property_1_cross_selling",size:"medium"})}
+      ${i({type:"property_1_cross_selling_2",size:"medium"})}
     </div>
     <div>
       <p>Large</p>
-      ${i({type:"property_1_cross_selling",size:"large"})}
+      ${i({type:"property_1_cross_selling_2",size:"large"})}
     </div>
   </div>
 `,o=()=>p`
@@ -388,21 +388,21 @@ import{x as p}from"./lit-element-D_Wi02Oa.js";import{i}from"./icon-B2F652rT.js";
     <div>
       <p>Small</p>
       \${icon({
-  type: 'property_1_cross_selling',
+  type: 'property_1_cross_selling_2',
   size: 'small'
 })}
     </div>
     <div>
       <p>Medium</p>
       \${icon({
-  type: 'property_1_cross_selling',
+  type: 'property_1_cross_selling_2',
   size: 'medium'
 })}
     </div>
     <div>
       <p>Large</p>
       \${icon({
-  type: 'property_1_cross_selling',
+  type: 'property_1_cross_selling_2',
   size: 'large'
 })}
     </div>
