@@ -1,4 +1,4 @@
-import{j as n,M as r}from"./index-BZmkAdaI.js";import{useMDXComponents as t}from"./index-BTNbzBbO.js";import"./iframe-CliV7dKj.js";import"./_commonjsHelpers-CqkleIqs.js";import"./index-CfOrKyLd.js";import"./index-DrFu-skq.js";function e(i){return n.jsxs(n.Fragment,{children:[n.jsx(r,{title:"Configurazioni generali"}),`
+import{j as n,M as r}from"./index-3Ll7RK4D.js";import{useMDXComponents as t}from"./index-Bn4yYmgb.js";import"./iframe-BvQKl4s6.js";import"./_commonjsHelpers-CqkleIqs.js";import"./index-CfOrKyLd.js";import"./index-DrFu-skq.js";function e(i){return n.jsxs(n.Fragment,{children:[n.jsx(r,{title:"Configurazioni generali"}),`
 `,n.jsxs("div",{children:[n.jsx("h1",{children:"Configurazioni generali"}),n.jsx("p",{children:"Le configurazioni generali sono le impostazioni che riguardano l'intero progetto."})]}),`
 `,n.jsx("style",{children:`
     @import '/index.css';
