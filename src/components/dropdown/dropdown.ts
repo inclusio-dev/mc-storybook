@@ -7,7 +7,7 @@ import { IconType } from '@/components/icon/iconSvgs';
 export interface DropdownProps {
   label: string;
   content: TemplateResult | string;
-  variant?: 'iconLabel' | 'iconLabelCart' | 'onlyLabel' ;
+  variant?: 'iconLabelCart' | 'onlyLabel' ;
   iconName?: IconType | null;
   dropdownWidth?: string;
   dropdownClass?: string;
@@ -17,7 +17,7 @@ export interface DropdownProps {
 export const dropdown = ({
   label,
   content,
-  variant = 'iconLabel',
+  variant = 'iconLabelCart',
   dropdownWidth = 'auto',
   dropdownClass = '',
   labelOnTopRight = '2',
@@ -108,9 +108,9 @@ export const dropdown = ({
         @click=${handleToggle}
       >
         
-        ${variant == "iconLabel" || variant == "iconLabelCart" ? (iconName ? icon({ type: iconName, size: "large" }) : null) : null}
+        ${ variant == "iconLabelCart" ? (iconName ? icon({ type: iconName, size: "large" }) : null) : null}
         <span class="dropdown__label">${label}</span>
-        ${variant == "iconLabelCart" ? html`<span class="labelOnTopRight">${labelOnTopRight}</span>` : null}
+        ${parseInt(labelOnTopRight) > 0 && variant == "iconLabelCart" ? html`<span class="labelOnTopRight">${labelOnTopRight}</span>` : null}
       </button>
       
       <div 

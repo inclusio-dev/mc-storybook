@@ -10,7 +10,7 @@ export default {
     label: { control: 'text' , description: 'Etichetta del pulsante',},
     variant: { 
       control: { type: 'select' }, 
-      options: ['iconLabel', 'iconLabelCart', 'onlyLabel'],
+      options: ['iconLabelCart', 'onlyLabel'],
       description: 'Variante del dropdown',
     },
     iconName: {
@@ -47,14 +47,6 @@ const Template: StoryFn<DropdownProps> = (args) => {
       content: args.content || defaultContent
     })}
   `;
-};
-
-export const iconLabel = Template.bind({});
-iconLabel.args = {
-  label: 'Catalogo',
-  variant: 'iconLabel',
-  iconName: 'tipo_catalogo',
-  dropdownWidth: '470px'
 };
 
 export const iconLabelCart = Template.bind({});
