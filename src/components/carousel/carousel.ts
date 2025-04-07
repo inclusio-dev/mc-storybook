@@ -60,6 +60,8 @@ export interface CarouselProps {
   };
   onSlideChange?: (index: number) => void;
   texts?: Partial<CarouselTexts>;
+  href?: string;
+  width?: string;
 }
 
 const DEFAULT_IMAGES = [
@@ -93,7 +95,9 @@ export const carousel = (props: CarouselProps) => {
     showPagination: props.showPagination !== undefined ? props.showPagination : true,
     showCaptions: props.showCaptions !== undefined ? props.showCaptions : true,
     navigationButtonPosition: props.navigationButtonPosition || NavigationButtonPosition.OVERLAY,
-    texts
+    href: props.href || '#',
+    width: props.width || '100%',
+    texts,
   };
 
   setTimeout(() => initCarousel(carouselId, mergedProps), 0);
@@ -108,56 +112,62 @@ export const carousel = (props: CarouselProps) => {
     <div id="${carouselId}" class="carousel-container ${mergedProps.multiSlide ? 'carousel-multi-slide' : ''} nav-${mergedProps.navigationButtonPosition}">
       <h2 id="carousel-title-${carouselId}" class="visually-hidden">${mergedProps.texts.imageGallery}</h2>
       
+      <!-- Play/Pause button -->
+      <button 
+        class="carousel-play-pause" 
+        type="button"
+        aria-label="${mergedProps.autoplay ? mergedProps.texts.pauseCarousel : mergedProps.texts.startCarousel}"
+        aria-pressed="${mergedProps.autoplay ? 'true' : 'false'}"
+      >
+        <span class="${mergedProps.autoplay ? 'pause-icon' : 'play-icon'}"></span>
+      </button>
+
       <div class="swiper-mask">
         <div class="swiper" role="region" aria-roledescription="carousel" aria-labelledby="carousel-title-${carouselId}">
-        <!-- Play/Pause button -->
-        <button 
-          class="carousel-play-pause" 
-          type="button"
-          aria-label="${mergedProps.autoplay ? mergedProps.texts.pauseCarousel : mergedProps.texts.startCarousel}"
-          aria-pressed="${mergedProps.autoplay ? 'true' : 'false'}"
-        >
-          <span class="${mergedProps.autoplay ? 'pause-icon' : 'play-icon'}"></span>
-        </button>
         
-        <!-- Accessibility instructions -->
-        <div class="visually-hidden" aria-live="polite">
-          ${mergedProps.texts.navigationInstructions}
+          <!-- Accessibility instructions -->
+          ${mergedProps.multiSlide ? "" : html`<div class="visually-hidden" aria-live="polite">${mergedProps.texts.navigationInstructions}</div>`}
+                
+          <!-- Slides -->
+          <div class="swiper-wrapper">
+            ${mergedProps.slides.map((slide, index) => html`
+              <div 
+                class="swiper-slide" 
+                role="group" 
+                aria-roledescription="slide"
+                aria-label="${slide.caption}"
+                tabindex="${index === 0 ? '0' : '-1'}"
+                aria-hidden="${index === 0 ? 'false' : 'true'}"
+                ${index === 0 ? 'aria-current="true"' : ''}
+              >
+                <a href="${mergedProps.href}" class="slide-link" target="_self"> 
+                  <img 
+                    src="${slide.image}" 
+                    alt="" 
+                    loading="lazy"
+                  />
+                  ${slide.caption && mergedProps.showCaptions ? html`
+                    <div class="slide-caption">${slide.caption}</div>
+                  ` : ''}
+                </a>
+              </div>
+            `)}
+          </div>
+
+        
         </div>
-        
-        <!-- Slides -->
-        <div class="swiper-wrapper">
-          ${mergedProps.slides.map((slide, index) => html`
-            <div 
-              class="swiper-slide" 
-              role="group" 
-              aria-roledescription="slide"
-              aria-label="${slide.caption}"
-              tabindex="${index === 0 ? '0' : '-1'}"
-              aria-hidden="${index === 0 ? 'false' : 'true'}"
-              ${index === 0 ? 'aria-current="true"' : ''}
-            >
-              <img 
-                src="${slide.image}" 
-                alt="" 
-                loading="lazy"
-              />
-              ${slide.caption && mergedProps.showCaptions ? html`
-                <div class="slide-caption">${slide.caption}</div>
-              ` : ''}
-            </div>
-          `)}
-        </div>
-        
-        <!-- Navigation -->
-        <div class="swiper-button-prev" role="button" aria-label="${mergedProps.texts.previousSlide}"></div>
-        <div class="swiper-button-next" role="button" aria-label="${mergedProps.texts.nextSlide}"></div>
-        
-        <!-- Pagination -->
-        ${mergedProps.showPagination ? html`
-          <div class="swiper-pagination"></div>
-        ` : ''}
       </div>
+
+      <!-- Navigation -->
+      <div class="swiper-button-prev" role="button" aria-label="${mergedProps.texts.previousSlide}" aria-hidden="${mergedProps.multiSlide ? true : false}"></div>
+      <div class="swiper-button-next" role="button" aria-label="${mergedProps.texts.nextSlide}" aria-hidden="${mergedProps.multiSlide ? true : false}"></div>
+      
+      <!-- Pagination -->
+      ${mergedProps.showPagination ? html`
+        <div class="swiper-pagination"></div>
+      ` : ''}
+
+
     </div>
     <div class="carousel-live-region visually-hidden" role="alert"></div>
   `;
@@ -218,7 +228,7 @@ async function initCarousel(carouselId: string, props: CarouselProps) {
         320: { slidesPerView: 1, spaceBetween: 10 },
         480: { slidesPerView: 2, spaceBetween: 15 },
         768: { slidesPerView: 3, spaceBetween: 20 },
-        1024: { slidesPerView: props.slidesPerView, spaceBetween: props.spaceBetween }
+        1024: { slidesPerView: props.slidesPerView, spaceBetween: props.spaceBetween },
       }) : undefined,
       
       navigation: {
@@ -240,6 +250,8 @@ async function initCarousel(carouselId: string, props: CarouselProps) {
         prevSlideMessage: (props.texts || defaultTexts).previousSlide,
         nextSlideMessage: (props.texts || defaultTexts).nextSlide
       },
+
+      
       
       on: {
 
@@ -247,7 +259,15 @@ async function initCarousel(carouselId: string, props: CarouselProps) {
           const swiperInstance = this as any;
           const currentSlide = swiperInstance.realIndex ?? swiperInstance.activeIndex ?? 0;
           
-          updateAriaAttributes(carouselId, currentSlide);
+          //console.log(swiperInstance)
+          //if(swiperInstance.passedParams.slidesPerView > 1){
+            /* swiperInstance.allowSlideNext = false;
+            swiperInstance.allowSlidePrev = false; */
+          //}
+          console.log(swiperInstance.allowSlideNext)
+          console.log(swiperInstance)
+          
+          updateAriaAttributes(carouselId, currentSlide, swiperInstance.passedParams.slidesPerView);
           
           const container = document.getElementById(carouselId);
           if (container) {
@@ -276,14 +296,16 @@ async function initCarousel(carouselId: string, props: CarouselProps) {
           } else {
             currentSlide = swiperInstance.activeIndex || 0;
           }
+
+          console.log(swiperInstance)
           
-          updateAriaAttributes(carouselId, currentSlide);
+          updateAriaAttributes(carouselId, currentSlide, swiperInstance.passedParams.slidesPerView);
           
           const container = document.getElementById(carouselId);
           if (container) {
             announceSlideChange(container, props.slides?.[currentSlide]);
           }
-          
+
           if (props.onSlideChange) {
             props.onSlideChange(currentSlide);
           }
@@ -314,7 +336,8 @@ function destroySwiper(carouselId: string) {
 }
 
 // Update ARIA attributes for current slide 
-function updateAriaAttributes(carouselId: string, currentSlide: number) {
+function updateAriaAttributes(carouselId: string, currentSlide: number, slidesPerView: number) {
+
   const container = document.getElementById(carouselId);
   if (!container) return;
   
@@ -325,11 +348,15 @@ function updateAriaAttributes(carouselId: string, currentSlide: number) {
    
     const isCurrent = index === currentSlide;
     
-    slide.setAttribute('tabindex', isCurrent ? '0' : '-1');
+    if(slidesPerView > 1){
+      slide.setAttribute('tabindex', '0');
+      slide.setAttribute('aria-hidden', 'false');
+    }else{
+      slide.setAttribute('tabindex', isCurrent ? '0' : '-1');
+      slide.setAttribute('aria-hidden', isCurrent ? 'false' : 'true');
+    }
     
-    slide.setAttribute('aria-hidden', isCurrent ? 'false' : 'true');
-    
-    if (isCurrent) {
+    if (isCurrent && slidesPerView == 1) {
       slide.setAttribute('aria-current', 'true');
     } else {
       slide.removeAttribute('aria-current');
@@ -364,14 +391,13 @@ function setupKeyboardControls(carouselId: string, props: CarouselProps) {
     const swiper = swiperInstances.get(carouselId);
     if (!swiper) return;
     
-    const now = Date.now();
-    
-    if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
+    if (['ArrowLeft', 'ArrowRight'].includes(event.key)) {
       event.preventDefault();
       
       if (event.key === 'ArrowLeft') {
         const prevButton = document.querySelector(`#${carouselId} .swiper-button-prev`);
         if (prevButton) {
+          console.log("prevButton", prevButton);
           (prevButton as HTMLElement).click();
         }
       } else if (event.key === 'ArrowRight') {
@@ -379,12 +405,9 @@ function setupKeyboardControls(carouselId: string, props: CarouselProps) {
         if (nextButton) {
           (nextButton as HTMLElement).click();
         }
-      } else if (event.key === 'Home') {
-        swiper.slideTo(0);
-      } else if (event.key === 'End') {
-        const lastSlideIndex = props.slides ? props.slides.length - 1 : swiper.slides.length - 1;
-        swiper.slideTo(lastSlideIndex);
       }
+
+      
       
       let currentIndex = swiper.realIndex;
       if (currentIndex === undefined) {
@@ -396,7 +419,7 @@ function setupKeyboardControls(carouselId: string, props: CarouselProps) {
         }
       }
       
-      updateAriaAttributes(carouselId, currentIndex);
+      updateAriaAttributes(carouselId, currentIndex, swiper.params.slidesPerView);
       
       const container = document.getElementById(carouselId);
       if (container && props.slides && props.slides[currentIndex]) {

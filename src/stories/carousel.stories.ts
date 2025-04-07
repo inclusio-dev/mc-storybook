@@ -79,6 +79,11 @@ export default {
       control: 'object',
       description: 'Array di oggetti slide con proprietà image, alt, title e caption',
     },
+    width: {
+      control: 'text',
+      description: 'Larghezza del carosello (es. 100%, 1200px)',
+      defaultValue: '100%',
+    },
     onSlideChange: { action: 'slideChanged' }
   },
   parameters: {
@@ -124,37 +129,37 @@ type Story = StoryObj<CarouselProps>;
 // Dati di esempio per tutte le storie
 const sampleSlides = [
   {
-    image: 'https://s3-alpha-sig.figma.com/img/cc27/81af/b14cbd720508f1fe1d84958268bdb889?Expires=1744588800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=WLnx4HLOIrz0bYkWf0Bt02jiWXoTaPhtqorhBtl9e0ZonLJkGcK2WOI6gyMr2nvXwktj8ZJFST066zkt~FTuQFm-GLfhuh3xBeXDT5lzsSLb2OiXek4mVuQ9wv06p591BvKK7xhfd7GDNm4hBLo1DLDvmKz5UjiJkSMs3e2R94t7Q-AMzlvH83lj1oogrV57sv2wL7nDL8CrxmVfJL5cbPCw1JFOoojCrAurvhoKvORuDyXabkH5S7qSKHk7-9GSii77iS3PC7dS7nJ0b00aHk03-~kwWZ0a2yFQ9fFr1N861T3W7Z4TL38IDZJgyT6qpKI~H8oLtYdzX8amciOENg__',
+    image: 'https://media.mondoconv.it/media/scandiweb/slider/b/u/buono_500_aprile_2025_desktop2.jpg',
     caption: 'Titolo prodotto carousel1',
-    href: '#'
+    href: '#',
   },
   {
-    image: 'https://s3-alpha-sig.figma.com/img/cc27/81af/b14cbd720508f1fe1d84958268bdb889?Expires=1744588800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=WLnx4HLOIrz0bYkWf0Bt02jiWXoTaPhtqorhBtl9e0ZonLJkGcK2WOI6gyMr2nvXwktj8ZJFST066zkt~FTuQFm-GLfhuh3xBeXDT5lzsSLb2OiXek4mVuQ9wv06p591BvKK7xhfd7GDNm4hBLo1DLDvmKz5UjiJkSMs3e2R94t7Q-AMzlvH83lj1oogrV57sv2wL7nDL8CrxmVfJL5cbPCw1JFOoojCrAurvhoKvORuDyXabkH5S7qSKHk7-9GSii77iS3PC7dS7nJ0b00aHk03-~kwWZ0a2yFQ9fFr1N861T3W7Z4TL38IDZJgyT6qpKI~H8oLtYdzX8amciOENg__',
+    image: 'https://media.mondoconv.it/media/scandiweb/slider/b/u/buono_500_aprile_2025_desktop2.jpg',
     caption: 'Titolo prodotto carousel2',
     href: '#'
   },
   {
-    image: 'https://s3-alpha-sig.figma.com/img/cc27/81af/b14cbd720508f1fe1d84958268bdb889?Expires=1744588800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=WLnx4HLOIrz0bYkWf0Bt02jiWXoTaPhtqorhBtl9e0ZonLJkGcK2WOI6gyMr2nvXwktj8ZJFST066zkt~FTuQFm-GLfhuh3xBeXDT5lzsSLb2OiXek4mVuQ9wv06p591BvKK7xhfd7GDNm4hBLo1DLDvmKz5UjiJkSMs3e2R94t7Q-AMzlvH83lj1oogrV57sv2wL7nDL8CrxmVfJL5cbPCw1JFOoojCrAurvhoKvORuDyXabkH5S7qSKHk7-9GSii77iS3PC7dS7nJ0b00aHk03-~kwWZ0a2yFQ9fFr1N861T3W7Z4TL38IDZJgyT6qpKI~H8oLtYdzX8amciOENg__',
+    image: 'https://media.mondoconv.it/media/scandiweb/slider/b/u/buono_500_aprile_2025_desktop2.jpg',
     caption: 'Titolo prodotto carousel3',
     href: '#'
   },
   {
-    image: 'https://s3-alpha-sig.figma.com/img/cc27/81af/b14cbd720508f1fe1d84958268bdb889?Expires=1744588800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=WLnx4HLOIrz0bYkWf0Bt02jiWXoTaPhtqorhBtl9e0ZonLJkGcK2WOI6gyMr2nvXwktj8ZJFST066zkt~FTuQFm-GLfhuh3xBeXDT5lzsSLb2OiXek4mVuQ9wv06p591BvKK7xhfd7GDNm4hBLo1DLDvmKz5UjiJkSMs3e2R94t7Q-AMzlvH83lj1oogrV57sv2wL7nDL8CrxmVfJL5cbPCw1JFOoojCrAurvhoKvORuDyXabkH5S7qSKHk7-9GSii77iS3PC7dS7nJ0b00aHk03-~kwWZ0a2yFQ9fFr1N861T3W7Z4TL38IDZJgyT6qpKI~H8oLtYdzX8amciOENg__',
+    image: 'https://media.mondoconv.it/media/scandiweb/slider/b/u/buono_500_aprile_2025_desktop2.jpg',
     caption: 'Titolo prodotto carousel4',
     href: '#'
   },
   {
-    image: 'https://s3-alpha-sig.figma.com/img/cc27/81af/b14cbd720508f1fe1d84958268bdb889?Expires=1744588800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=WLnx4HLOIrz0bYkWf0Bt02jiWXoTaPhtqorhBtl9e0ZonLJkGcK2WOI6gyMr2nvXwktj8ZJFST066zkt~FTuQFm-GLfhuh3xBeXDT5lzsSLb2OiXek4mVuQ9wv06p591BvKK7xhfd7GDNm4hBLo1DLDvmKz5UjiJkSMs3e2R94t7Q-AMzlvH83lj1oogrV57sv2wL7nDL8CrxmVfJL5cbPCw1JFOoojCrAurvhoKvORuDyXabkH5S7qSKHk7-9GSii77iS3PC7dS7nJ0b00aHk03-~kwWZ0a2yFQ9fFr1N861T3W7Z4TL38IDZJgyT6qpKI~H8oLtYdzX8amciOENg__',
+    image: 'https://media.mondoconv.it/media/scandiweb/slider/b/u/buono_500_aprile_2025_desktop2.jpg',
     caption: 'Titolo prodotto carousel5',
     href: '#'
   },
   {
-    image: 'https://s3-alpha-sig.figma.com/img/cc27/81af/b14cbd720508f1fe1d84958268bdb889?Expires=1744588800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=WLnx4HLOIrz0bYkWf0Bt02jiWXoTaPhtqorhBtl9e0ZonLJkGcK2WOI6gyMr2nvXwktj8ZJFST066zkt~FTuQFm-GLfhuh3xBeXDT5lzsSLb2OiXek4mVuQ9wv06p591BvKK7xhfd7GDNm4hBLo1DLDvmKz5UjiJkSMs3e2R94t7Q-AMzlvH83lj1oogrV57sv2wL7nDL8CrxmVfJL5cbPCw1JFOoojCrAurvhoKvORuDyXabkH5S7qSKHk7-9GSii77iS3PC7dS7nJ0b00aHk03-~kwWZ0a2yFQ9fFr1N861T3W7Z4TL38IDZJgyT6qpKI~H8oLtYdzX8amciOENg__',
+    image: 'https://media.mondoconv.it/media/scandiweb/slider/b/u/buono_500_aprile_2025_desktop2.jpg',
     caption: 'Titolo prodotto carousel6',
     href: '#'
   },
   {
-    image: 'https://s3-alpha-sig.figma.com/img/cc27/81af/b14cbd720508f1fe1d84958268bdb889?Expires=1744588800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=WLnx4HLOIrz0bYkWf0Bt02jiWXoTaPhtqorhBtl9e0ZonLJkGcK2WOI6gyMr2nvXwktj8ZJFST066zkt~FTuQFm-GLfhuh3xBeXDT5lzsSLb2OiXek4mVuQ9wv06p591BvKK7xhfd7GDNm4hBLo1DLDvmKz5UjiJkSMs3e2R94t7Q-AMzlvH83lj1oogrV57sv2wL7nDL8CrxmVfJL5cbPCw1JFOoojCrAurvhoKvORuDyXabkH5S7qSKHk7-9GSii77iS3PC7dS7nJ0b00aHk03-~kwWZ0a2yFQ9fFr1N861T3W7Z4TL38IDZJgyT6qpKI~H8oLtYdzX8amciOENg__',
+    image: 'https://media.mondoconv.it/media/scandiweb/slider/b/u/buono_500_aprile_2025_desktop2.jpg',
     caption: 'Titolo prodotto carousel7',
     href: '#'
   }
@@ -171,8 +176,9 @@ export const Default: Story = {
     spaceBetween: 20,
     centeredSlides: false,
     showPagination: true,
-    showCaptions: true,
-    navigationButtonPosition: NavigationButtonPosition.OVERLAY
+    showCaptions: false,
+    navigationButtonPosition: NavigationButtonPosition.OVERLAY,
+    width: '100%',
   },
 };
 
@@ -180,7 +186,7 @@ export const FiveSlides: Story = {
   args: {
     slides: sampleSlides,
     autoplay: false,
-    loop: true,
+    loop: false,
     delay: 5000,
     multiSlide: true,
     slidesPerView: 5,
@@ -188,7 +194,8 @@ export const FiveSlides: Story = {
     centeredSlides: false,
     showPagination: false,
     showCaptions: true,
-    navigationButtonPosition: NavigationButtonPosition.OUTSIDE
+    navigationButtonPosition: NavigationButtonPosition.OUTSIDE,
+    width: '1200px',
   },
   parameters: {
     docs: {
@@ -208,26 +215,6 @@ export const WithAutoplay: Story = {
     docs: {
       description: {
         story: 'Carosello multi-slide con riproduzione automatica attivata. Si mette in pausa quando l\'utente interagisce con esso.'
-      },
-    },
-  },
-};
-
-export const OutsideNavigation: Story = {
-  args: {
-    slides: sampleSlides,
-    autoplay: false,
-    loop: true,
-    multiSlide: true,
-    slidesPerView: 3,
-    spaceBetween: 20,
-    showCaptions: true,
-    navigationButtonPosition: NavigationButtonPosition.OUTSIDE
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Carosello con pulsanti di navigazione posizionati all\'esterno dell\'area delle slide, con un padding di 2rem dai bordi.'
       },
     },
   },

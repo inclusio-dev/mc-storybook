@@ -1,7 +1,9 @@
+@import "/index.css";
+
 /* Core carousel styles */
 .carousel-container {
   margin: 0 auto;
-  max-width: 800px;
+/*   max-width: 800px; */
   position: relative;
 }
 
@@ -14,7 +16,7 @@
 
 /* Adds container mask effect */
 .carousel-multi-slide {
-  max-width: 1200px;
+/*   max-width: 1200px; */
   position: relative;
 }
 
@@ -33,10 +35,6 @@
   transition: opacity 0.3s ease;
 }
 
-.swiper-slide a{
-  text-decoration: none;
-}
-
 /* Swiper core */
 .swiper {
   position: relative;
@@ -50,6 +48,10 @@
   display: flex;
   box-sizing: content-box;
   transition-property: transform;
+}
+
+.slide-link{
+  text-decoration: none;
 }
 
 /* Fix per frecce di navigazione in Swiper */
@@ -119,11 +121,11 @@
 }
 
 .nav-outside .swiper-button-next {
-  right: 1rem; /* Posizionato all'interno del padding */
+  right: 0rem; /* Posizionato all'interno del padding */
 }
 
 .nav-outside .swiper-button-prev {
-  left: 1rem; /* Posizionato all'interno del padding */
+  left: 0rem; /* Posizionato all'interno del padding */
 }
 
 /* .nav-outside .swiper-button-next:hover {
@@ -180,7 +182,7 @@
 .carousel-multi-slide .slide-caption {
   font-size: 16px;
   font-weight: 700;
-  padding: 8px 10px;
+  padding: 8px 0px;
   margin-top: 8px;
 }
 
