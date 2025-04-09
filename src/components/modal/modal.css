@@ -1,0 +1,78 @@
+/* Stile modale */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+  }
+  
+  .modal-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .modal {
+    background-color: white;
+    border-radius: 4px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    padding: 24px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .modal-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+  
+  .modal-close {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    color: #333;
+    font-size: 24px;
+    line-height: 1;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+  }
+  
+  .modal-close:hover, .modal-close:focus {
+    background-color: #f1f1f1;
+    color: #000;
+  }
+  
+  .modal-content {
+    margin-bottom: 24px;
+  }
+  
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  
+  

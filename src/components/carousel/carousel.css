@@ -84,8 +84,8 @@
 /* Navigation buttons */
 .swiper-button-next,
 .swiper-button-prev {
-  /* width: 44px; */
-  /* height: 44px !important; */
+  /* width: 44px !important;
+  height: 44px !important; */
   background-color: rgba(0, 0, 0, 0.8);
   border: 2px solid rgba(255, 255, 255);
   border-radius: 50%;
@@ -94,7 +94,7 @@
   margin: 0; /* Rimuove margini predefiniti */
   position: absolute; /* Posizionamento assoluto */
   top: 50%; /* Centrato verticalmente */
-  /* transform: translateY(-50%); */ /* Aggiustamento per centrare verticalmente */
+  transform: translateY(-50%) !important; /* Aggiustamento per centrare verticalmente */
   z-index: 10; /* Sopra il contenuto */
 }
 
